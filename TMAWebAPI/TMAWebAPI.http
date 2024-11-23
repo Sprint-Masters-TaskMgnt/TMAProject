@@ -1,0 +1,6 @@
+@TMAWebAPI_HostAddress = http://localhost:5160
+
+GET {{TMAWebAPI_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
