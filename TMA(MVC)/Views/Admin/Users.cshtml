@@ -1,0 +1,318 @@
+﻿﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User - CRUD Operations</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+            background-image: url('https://www.wimi-teamwork.com/static/medias/logiciels-gestion-des-taches-1280x640-1.png');
+            background-size: auto;
+            background-repeat: no-repeat;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        form {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        label {
+            display: block;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        input[type="number"],
+        input[type="password"],
+        input[type="email"],
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-top: 5px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px 0;
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            width: 100%;
+        }
+
+            button:hover {
+                background-color: #0056b3;
+            }
+
+        #responseMessage {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #usersList {
+            max-width: 400px;
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 100%;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>User Management - CRUD Operations</h1>
+
+    <!-- Add User Form -->
+    <h2>Add or Update User</h2>
+    <form id="userForm">
+        <label for="id">ID:</label>
+        <input type="text" id="id" name="id" required>
+
+        <label for="userName">UserName:</label>
+        <input type="text" id="userName" name="serName" required>
+
+        <label for="phoneNumber">PhoneNumber:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+
+        <label for="passwordHash">Password:</label>
+        <input type="password" id="passwordHash" name="passwordHash" required>
+
+        <label for="userRole">UserRole:</label>
+        <input type="text" id="userRole" name="userRole" required>
+
+        <button type="button" onclick="addUser()">Add User (POST)</button>
+        <button type="button" onclick="updateUser()">Update User (PUT)</button>
+    </form>
+
+    <!-- DELETE User Form -->
+    <h2>DELETE User by ID</h2>
+    <form id="deleteUserForm">
+        <label for="deleteUserId">User ID:</label>
+        <input type="number" id="deleteUserId" name="deleteUserId" required><br><br>
+        <button type="button" onclick="deleteUser()">Delete User</button>
+    </form>
+
+    <label id="responseMessage"></label>
+
+    <!-- View All Users -->
+    <h2>View All Users</h2>
+    <button type="button" id="toggleUsersButton" onclick="fetchAllUsers()">Get All Users</button>
+    <div id="usersList"></div>
+
+    <!-- View User by Id -->
+    <h2>GET User by ID</h2>
+    <form id="getUserForm">
+        <label for="getUserId">User ID:</label>
+        <input type="number" id="getUserId" name="id" required><br><br>
+        <button type="button" onclick="getUser()">GET User</button>
+    </form>
+    <pre id="getResult"></pre>
+
+    <script>
+        const userApiUrl = 'https://localhost:7000/api/AspNetUsers';
+        let isUserListVisible = false;
+
+        // Function to display messages
+        function displayMessage(message, isError = false) {
+            const responseLabel = document.getElementById("responseMessage");
+            responseLabel.style.color = isError ? "red" : "green";
+            responseLabel.textContent = message;
+        }
+
+        // Function to add a new User (POST)
+        function addUser() {
+            const id = document.getElementById("id").value;
+            const userName = document.getElementById("userName").value;
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const email = document.getElementById("email").value;
+            const passwordHash = document.getElementById("passwordHash").value;
+            const userRole = document.getElementById("userRole").value;
+
+            // Validate fields before making the request
+            if (!id || !userName || !phoneNumber || !email || !passwordHash || !userRole) {
+                displayMessage("All fields are required!", true);
+                return;
+            }
+
+            const data = {
+                id: id,
+                userName: userName,
+                phoneNumber: phoneNumber,
+                email: email,
+                passwordHash: passwordHash,
+                userRole: userRole
+            };
+
+
+            fetch(userApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    displayMessage("User added successfully!");
+                    displaySingleUsers([data]);
+                });
+        }
+
+        // Function to update a User (PUT)
+        function updateUser() {
+            const id = document.getElementById("id").value;
+            const userName = document.getElementById("userName").value;
+            const phoneNumber = document.getElementById("phoneNumber").value;
+            const email = document.getElementById("email").value;
+            const passwordHash = document.getElementById("passwordHash").value;
+            const userRole = document.getElementById("userRole").value;
+
+            // Validate fields before making the request
+            if (!id || !userName || !phoneNumber || !email || !passwordHash || !userRole) {
+                displayMessage("All fields are required!", true);
+                return;
+            }
+
+            const data = {
+                id: id,
+                userName: userName,
+                phoneNumber: phoneNumber,
+                email: email,
+                passwordHash: passwordHash,
+                userRole: userRole
+            };
+
+            // Send the PUT request
+            fetch(`${userApiUrl}/${id}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (response.status === 204) {
+                        displayMessage("User updated successfully!");
+                        return null;
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(`Request failed with status ${response.status}`);
+                    }
+
+                    return response.json();
+                })
+                .then(data => {
+                    if (data) {
+                        displaySingleUsers([data]);
+                    }
+                    displayMessage("User updated successfully!");
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    displayMessage(`Error: ${error.message}`, true);
+                });
+        }
+
+        // Function to delete a User (DELETE)
+        function deleteUser() {
+            const id = document.getElementById("deleteUserId").value;
+
+            if (!id) {
+                displayMessage("Please enter a User ID to delete", true);
+                return;
+            }
+
+            fetch(`${userApiUrl}/${id}`, { method: 'DELETE' })
+                .then(response => {
+                    if (response.status === 204) {
+                        displayMessage(`User ID ${id} deleted`);
+                        fetchAllUsers();
+                    }
+                });
+        }
+
+        // Function to fetch all Users (GET)
+        function fetchAllUsers() {
+            const usersList = document.getElementById("usersList");
+            const button = document.getElementById("toggleUsersButton");
+
+            if (isUserListVisible) {
+                usersList.innerHTML = "";
+                button.textContent = "Get All Users";
+            } else {
+                fetch(userApiUrl)
+                    .then(response => response.json())
+                    .then(data => displayUsers(data));
+                button.textContent = "Hide Users";
+            }
+
+            isUserListVisible = !isUserListVisible; // Toggle visibility
+        }
+
+        // Function to fetch User by ID (GET)
+        function getUser() {
+            const id = document.getElementById("getUserId").value;
+
+            fetch(`${userApiUrl}/${userId}`)
+                .then(response => response.json())
+                .then(user => {
+                    const result = `
+                                       ID: ${user.id}, Name: ${user.userName}, PhoneNumber: ${user.phoneNumber}, Email: ${user.email}, Password: ${user.password}, UserRole: ${user.userRole}
+                                        `;
+                    document.getElementById("getResult").textContent = result;
+                })
+                .catch(error => console.error('Error:', error));
+        }
+
+        // Function to display a single User
+        function displaySingleUsers(users) {
+            const usersList = document.getElementById("usersList");
+            usersList.innerHTML = "<h3>User:</h3>";
+            usersList.innerHTML += users.map(user => `
+                                                         <p> ID: ${user.id}, Name: ${user.userName}, PhoneNumber: ${user.phoneNumber}, Email: ${user.email}, Password: ${user.password}, UserRole: ${user.userRole}</p>
+                                                    `).join('');
+        }
+
+        // Function to display all Users
+        function displayUsers(users) {
+            const usersList = document.getElementById("usersList");
+            usersList.innerHTML = "<h3>All Users:</h3>";
+            usersList.innerHTML += users.map(user => `
+                                                         <p> ID: ${user.id}, Name: ${user.userName}, PhoneNumber: ${user.phoneNumber}, Email: ${user.email}, Password: ${user.password}, UserRole: ${user.userRole}</p>
+                                                    `).join('');
+        }
+    </script>
+</body>
+</html>
+
+@*<img src="https://www.pngkit.com/png/full/356-3561350_illustration-wallboard-vs-dashboard-project-manager-emoji.png" id="img" style="width: 324px; height: 362px;">*@
+@*<img src="https://img.freepik.com/premium-vector/3d-minimal-social-media-with-emoji-hashtag-speech-mobile-hand-holding-interface-optimization-banner-website-mockup-mobile-phone-concept-3d-social-network-vector-render-illustration_412828-1062.jpg?w=900" id="img" style="width: 324px; height: 216px;">*@
+@*<img src="https://mayeit.taskaid.eu/img/task-logo.png" id="img" style="width: 324px; height: 324px;">*@
+@*<img src="https://onlinecbt.stbalia-yk.ac.id/wp-content/uploads/2022/12/bg-register.png" id="img" style="width: 324px; height: 244px;">*@

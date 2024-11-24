@@ -1,0 +1,261 @@
+﻿﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+</head>
+<body>
+    <h1>Task Management System</h1>
+
+    <!-- Task Form -->
+    <form id="taskForm">
+        <h2>Task Management</h2>
+
+        <label for="taskId">Task Id: </label>
+        <input type="number" id="taskId" placeholder="Enter Task Id">
+        <br><br>
+
+        <label for="taskName">Task Name: </label>
+        <input type="text" id="taskName" placeholder="Enter Task Name" required>
+        <br><br>
+
+        <label for="projectId">Project Id: </label>
+        <input type="number" id="projectId" placeholder="Enter Project Id" required>
+        <br><br>
+
+        <label for="assignedToUserId">Assigned To (User Id): </label>
+        <input type="text" id="assignedToUserId" placeholder="Enter User Id" required>
+        <br><br>
+
+        <label for="taskStartDate">Task Start Date: </label>
+        <input type="date" id="taskStartDate" required>
+        <br><br>
+
+        <label for="taskEndDate">Task End Date: </label>
+        <input type="date" id="taskEndDate" required>
+        <br><br>
+
+        <label for="priority">Priority: </label>
+        <select id="priority" required>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+        <br><br>
+
+        <label for="status">Status: </label>
+        <select id="status" required>
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+        </select>
+        <br><br>
+        <label for="description">Description: </label>
+        <input type="text" id="description" required>
+        <br><br>
+
+        <button type="button" onclick="assignTask()">Assign Task</button>
+        <button type="button" onclick="updateTask()">Update Task</button>
+        <button type="button" onclick="deleteTaskById()">Delete Task</button>
+    </form>
+
+    <p id="responseMessage"></p>
+
+    <!-- Task Retrieval Section -->
+    <h2>Retrieve Task</h2>
+    <label for="retrieveTaskId">Task Id: </label>
+    <input type="number" id="retrieveTaskId" placeholder="Enter Task Id">
+    <button type="button" onclick="getTaskById()">Get Task By Id</button>
+
+    <h2>View All Tasks</h2>
+    <button type="button" onclick="fetchAllTasks()">Fetch All Tasks</button>
+    <div id="taskList"></div>
+
+    <script>
+        const apiUrl = 'https://localhost:7000/api/TaskTbls'; // Task API
+        const userApiUrl = 'https://localhost:7000/api/AspNetUsers'; // User API for validation
+
+        // Display response messages
+        function displayMessage(message, isError = false) {
+            const responseMessage = document.getElementById("responseMessage");
+            responseMessage.style.color = isError ? "red" : "green";
+            responseMessage.textContent = message;
+        }
+
+        // Helper to get form data
+        function getFormData() {
+            const taskId = document.getElementById("taskId").value;
+            const taskName = document.getElementById("taskName").value;
+            const projectId = document.getElementById("projectId").value;
+            const assignedToUserId = document.getElementById("assignedToUserId").value;
+            const taskStartDate = document.getElementById("taskStartDate").value;
+            const taskEndDate = document.getElementById("taskEndDate").value;
+            const priority = document.getElementById("priority").value;
+            const status = document.getElementById("status").value;
+            const description = document.getElementById("description").value;
+
+            if (!taskId || !taskName || !projectId || !assignedToUserId || !taskStartDate || !taskEndDate || !priority || !status) {
+                displayMessage("All fields are required.", true);
+                return null;
+            }
+
+            return {
+                taskId: parseInt(taskId),
+                taskName,
+                projectId: parseInt(projectId),
+                assignedToUserId,
+                taskStartDate,
+                taskEndDate,
+                priority,
+                status,
+                description
+            };
+        }
+
+        // Assign Task
+        function assignTask() {
+            const assignedToUserId = document.getElementById("assignedToUserId").value;
+            if (!assignedToUserId) {
+                return displayMessage("Please enter a valid User Id.", true);
+            }
+
+            fetch(`${userApiUrl}/${assignedToUserId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`User with ID ${assignedToUserId} does not exist.`);
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    createTask(); // Call create task if user validation succeeds
+                })
+                .catch(error => displayMessage(error.message, true));
+        }
+
+        // Create Task (POST)
+        function createTask() {
+            const taskData = getFormData();
+            if (!taskData) return;
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to create task.");
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    displayMessage("Task assigned successfully.");
+                    fetchAllTasks();
+                })
+                .catch(error => displayMessage(error.message, true));
+        }
+
+
+        // Update Task (PUT)
+        function updateTask() {
+            const taskData = getFormData();
+
+            if (!taskData || !taskData.taskId) {
+                return displayMessage("Task ID is required for updates.", true);
+            }
+
+            fetch(`${apiUrl}/${taskData.taskId}`, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskData)
+            })
+                .then(response => {
+                    // Check if response is OK
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err?.message || "Failed to update task.");
+                        });
+                    }
+
+                    // Handle cases where response might be empty
+                    if (response.status === 204) {
+                        return { Message: "Task updated successfully." };
+                    }
+                    return response.json(); // Parse JSON if response exists
+                })
+                .then(data => {
+                    const message = data?.Message || "Task updated successfully.";
+                    displayMessage(message);
+                    fetchAllTasks(); // Refresh the task list
+                })
+                .catch(error => displayMessage(`Error: ${error.message}`, true));
+        }
+
+
+
+        // Delete Task (DELETE)
+        function deleteTaskById() {
+            const taskId = document.getElementById("taskId").value;
+            if (!taskId) {
+                return displayMessage("Task ID is required for deletion.", true);
+            }
+
+            fetch(`${apiUrl}/${taskId}`, {
+                method: 'DELETE'
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to delete task.");
+                    }
+                    displayMessage("Task deleted successfully.");
+                    fetchAllTasks();
+                })
+                .catch(error => displayMessage(error.message, true));
+        }
+
+        // Get Task by ID (GET)
+        function getTaskById() {
+            const taskId = document.getElementById("retrieveTaskId").value;
+            if (!taskId) {
+                return displayMessage("Please enter a valid Task ID.", true);
+            }
+
+            fetch(`${apiUrl}/${taskId}`)
+                .then(response => response.json())
+                .then(task => {
+                    displayMessage(`Task Retrieved: ${JSON.stringify(task)}`);
+                })
+                .catch(error => displayMessage(error.message, true));
+        }
+
+        // Fetch All Tasks (GET)
+        function fetchAllTasks() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(tasks => displayTasks(tasks))
+                .catch(error => displayMessage(error.message, true));
+        }
+
+        // Display tasks
+        function displayTasks(tasks) {
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = tasks.map(task =>
+                `<div>
+                                <p>Task ID: ${task.taskId}</p>
+                                <p>Task Name: ${task.taskName}</p>
+                                <p>Project ID: ${task.projectId}</p>
+                                <p>Assigned To: ${task.assignedToUserId}</p>
+                                <p>Start Date: ${task.taskStartDate}</p>
+                                <p>End Date: ${task.taskEndDate}</p>
+                                <p>Priority: ${task.priority}</p>
+                                <p>Status: ${task.status}</p>
+                                <p>Description: ${task.description}</p>
+                            </div>
+                            <hr>`
+            ).join('');
+        }
+    </script>
+</body>
+</html>

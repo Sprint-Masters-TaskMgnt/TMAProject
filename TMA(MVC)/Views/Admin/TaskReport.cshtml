@@ -1,0 +1,189 @@
+﻿﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Task Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            padding-top: 15px;
+        }
+
+        button {
+            text-align: center;
+            background-color: navy;
+            color: aliceblue;
+            border-block: solid;
+            border-block-color: darkblue;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bolder;
+            font-size: larger;
+            width: 200px;
+            height: 40px;
+            margin-left: 40px;
+        }
+
+        form {
+            margin: 20px;
+            padding: 20px;
+            text-align: left;
+        }
+
+            form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                font-size: large;
+            }
+
+            form input {
+                height: 40px;
+                margin-bottom: 15px;
+                padding: 8px;
+                font-size: 1rem;
+                width: 350px;
+            }
+
+        #responseMessage {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+
+        #userIdForm > img {
+            position: absolute;
+            margin-left: 680px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>User Task Report</h1>
+
+
+    <!-- Input to enter User ID -->
+    <h2>Enter User ID</h2>
+    <form id="userIdForm">
+        <img src="https://www.allen.ac.in/ace2324/assets/images/register.png" id="img" style="width: 324px; height: 324px;">
+
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" required>
+        <button type="button" onclick="generateReport()">Generate Report</button>
+    </form>
+
+    <!-- Area to display the report -->
+    <div id="report"></div>
+
+    <!-- Download button -->
+    <div id="downloadButtonContainer" style="display: none;">
+        <button id="downloadReportBtn">Download Report</button>
+    </div>
+
+    <script>
+        const tasksApiUrl = 'https://localhost:7000/api/UserTaskReport/TaskTbls';  // Replace with your actual tasks API endpoint
+        const userApiUrl = 'https://localhost:7000/api/UserTaskReport/AspNetUsers';  // Replace with your actual users API endpoint
+
+        function generateReport() {
+            const userId = document.getElementById("userId").value;
+
+            if (!userId) {
+                displayError("Please enter a valid User ID.");
+                return;
+            }
+
+            // Fetch user details
+            fetch(`${userApiUrl}/${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("User not found.");
+                    return response.json();
+                })
+                .then(user => {
+                    // Fetch tasks associated with the user
+                    fetch(`${tasksApiUrl}/${userId}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Tasks not found.");
+                            return response.json();
+                        })
+                        .then(tasks => {
+                            // Filter tasks to only include those for the specific user
+                            displayReport(user, tasks);
+                        })
+                        .catch(error => displayError(error.message));
+                })
+                .catch(error => displayError(error.message));
+        }
+
+        function displayReport(user, tasks) {
+            const reportDiv = document.getElementById("report");
+
+            // User Details
+            let reportHtml = `
+                    <h2>User Details</h2>
+                    <p><strong>User ID:</strong> ${user.userId}</p>
+                    <p><strong>Name:</strong> ${user.userName} </p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <h2>Tasks Assigned</h2>
+                `;
+
+            // Tasks List
+            if (tasks.length === 0) {
+                reportHtml += "<p>No tasks found for this user.</p>";
+            } else {
+                reportHtml += "<ul>";
+                tasks.forEach(task => {
+                    reportHtml += `
+                            <li>
+                                <p><strong>Task ID:</strong> ${task.taskId}</p>
+                                <p><strong>Task Name:</strong> ${task.taskName}</p>
+                                <p><strong>Status:</strong> ${task.status}</p>
+                            </li>
+                        `;
+                });
+                reportHtml += "</ul>";
+            }
+
+            reportDiv.innerHTML = reportHtml;
+
+            // Show the download button
+            document.getElementById("downloadButtonContainer").style.display = "block";
+            document.getElementById("downloadReportBtn").onclick = () => downloadReport(user.userId);
+        }
+
+        function displayError(message) {
+            const reportDiv = document.getElementById("report");
+            reportDiv.innerHTML = `<p class="error">${message}</p>`;
+        }
+
+        // Function to handle report download
+        function downloadReport(userId) {
+            const downloadUrl = `${tasksApiUrl}/${userId}/downloadReport`;
+
+            fetch(downloadUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to download report.");
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `User_${userId}_Task_Report.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => {
+                    displayError("Error downloading report: " + error.message);
+                });
+        }
+    </script>
+</body>
+</html>

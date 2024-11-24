@@ -1,0 +1,195 @@
+﻿﻿
+@{
+    ViewBag.Title = "Project Management";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fetch Tasks by Project ID</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            padding-top: 15px;
+        }
+
+        button {
+            text-align: center;
+            background-color: navy;
+            color: aliceblue;
+            border-block: solid;
+            border-block-color: darkblue;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bolder;
+            font-size: larger;
+            width: 200px;
+            height: 40px;
+            margin-left: 40px;
+        }
+
+        form {
+            margin: 20px;
+            padding: 20px;
+            text-align: left;
+        }
+
+            form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                font-size: large;
+            }
+
+            form input {
+                height: 40px;
+                margin-bottom: 15px;
+                padding: 8px;
+                font-size: 1rem;
+                width: 350px;
+            }
+
+        #responseMessage {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #tasksForProject > ul {
+            list-style-type: none;
+            padding: 0;
+        }
+
+            #tasksForProject > ul > li {
+                margin-bottom: 10px;
+                padding: 8px;
+                border: 1px solid #ddd;
+                background: #f9f9f9;
+                border-radius: 5px;
+            }
+
+        #Projectmgnt > img {
+            position: absolute;
+            margin-left: 680px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Fetch Tasks by Project ID</h1>
+
+    <form id="Projectmgnt">
+        <img src="https://ouch-cdn2.icons8.com/LLSZGYbAC-WGMMHgrbuTAIN-BHo-PUlxNk8dCg1uMlU/rs:fit:343:456/extend:false/wm:1:re:0:0:0.8/wmid:ouch/czM6Ly9pY29uczgu/b3VjaC1wcm9kLmFz/c2V0cy9wbmcvMTgz/L2Q2MDQxN2YwLTM1/NzctNDc3Ni05MjZh/LTU1MGJiODQ2MGZl/YS5wbmc.png" id="img" style="width: 392px; height: 458px;">
+        <!-- Input field for project ID -->
+        <label for="projectId">Enter Project ID:</label><br />
+        <input type="text" id="projectId" name="projectId" placeholder="Enter project ID" /><br />
+        <button type="button" onclick="fetchProjectDetails()">Fetch Tasks</button>
+    </form>
+
+    <!-- Div to display project details -->
+    <div id="projectDetails" style="margin-top: 20px;"></div>
+
+    <!-- Download button -->
+    <div id="downloadButtonContainer" style="display: none; margin-top: 20px;">
+        <button id="downloadReportBtn">Download Report</button>
+    </div>
+
+    <script>
+        const apiBaseUrl = "https://localhost:7000/api/TaskTbls";
+
+        // Fetch project details and display them
+        function fetchProjectDetails() {
+            const projectId = document.getElementById("projectId").value.trim();
+
+            if (!projectId) {
+                alert("Please enter a valid Project ID.");
+                return;
+            }
+
+            const fetchUrl = `${apiBaseUrl}/getProjectDetails/${projectId}`;
+
+            fetch(fetchUrl)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error(`No project found with ID: ${projectId}`);
+                    }
+                    return response.json();
+                })
+                .then((data) => {
+                    displayProjectDetails(data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error.message);
+                    document.getElementById("projectDetails").innerHTML = `
+                        <p style="color: red;">Error: ${error.message}</p>`;
+                    document.getElementById("downloadButtonContainer").style.display = "none";
+                });
+        }
+
+        // Display project details
+        function displayProjectDetails(project) {
+            const projectDetailsDiv = document.getElementById("projectDetails");
+            projectDetailsDiv.innerHTML = `
+                <h2>Project Details</h2>
+                <p><strong>Project Name:</strong> ${project.projectName}</p>
+                <p><strong>Description:</strong> ${project.description}</p>
+                <p><strong>Start Date:</strong> ${new Date(project.startDate).toLocaleDateString()}</p>
+                <p><strong>End Date:</strong> ${new Date(project.endDate).toLocaleDateString()}</p>
+                <h3>Tasks</h3>
+                <ul>
+                    ${project.tasks.map((task) => `
+                        <li>
+                            <strong>Task Name:</strong> ${task.taskName}<br>
+                            <strong>Description:</strong> ${task.description}<br>
+                            <strong>Start Date:</strong> ${new Date(task.taskStartDate).toLocaleDateString()}<br>
+                            <strong>End Date:</strong> ${new Date(task.taskEndDate).toLocaleDateString()}<br>
+                            <strong>Priority:</strong> ${task.priority}<br>
+                            <strong>Status:</strong> ${task.status}
+                        </li>
+                    `).join("")}
+                </ul>
+            `;
+
+            // Show the download button
+            const downloadButtonContainer = document.getElementById("downloadButtonContainer");
+            downloadButtonContainer.style.display = "block";
+            const downloadButton = document.getElementById("downloadReportBtn");
+            downloadButton.onclick = () => downloadProjectReport(project.projectId);
+        }
+
+        // Download project report
+        function downloadProjectReport(projectId) {
+            const downloadUrl = `${apiBaseUrl}/downloadProjectReport/${projectId}`;
+
+            fetch(downloadUrl)
+                .then((response) => {
+                    if (!response.ok) {
+                        throw new Error("Failed to download report.");
+                    }
+                    return response.blob();
+                })
+                .then((blob) => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `Project_${projectId}_Report.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch((error) => {
+                    console.error("Error:", error.message);
+                    alert("Error downloading report.");
+                });
+        }
+    </script>
+
+
+</body>
+</html>
