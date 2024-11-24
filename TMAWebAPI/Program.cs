@@ -1,6 +1,10 @@
 using Microsoft.EntityFrameworkCore;
 using Serilog;
+using TMAWebAPI.Services;
 using TMAWebAPI.Models;
+using TMADbAPI.Services;
+
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,9 +14,11 @@ builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 builder.Services.AddDbContext<TMADbContext>(options =>
       options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
 
 
 //Configure Serilog

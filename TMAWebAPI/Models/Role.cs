@@ -1,11 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace TMAWebAPI.Models
+namespace TMAWebAPI.Models;
+
+public partial class Role
 {
-    public class Role
-    {
-        [Key]
-        public int RoleId { get; set; }
-        public string RoleName { get; set; }
-    }
+    public int RoleId { get; set; }
+
+    public string RoleName { get; set; } = null!;
+
+    public virtual ICollection<User> Users { get; set; } = new List<User>();
 }
