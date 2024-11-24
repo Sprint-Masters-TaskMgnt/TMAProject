@@ -1,6 +1,9 @@
 using Microsoft.EntityFrameworkCore;
+
 using Serilog;
+using TMADbAPI.Services;
 using TMAWebAPI.Models;
+using TMAWebAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,6 +16,8 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddDbContext<TMADbContext>(options =>
       options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddScoped<IEmailService, EmailService>();
 
 
 //Configure Serilog

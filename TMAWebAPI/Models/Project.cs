@@ -1,22 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
-namespace TMAWebAPI.Models
+namespace TMAWebAPI.Models;
+
+public partial class Project
 {
-    public class Project
-    {
-        [Key]
-        public int ProjectId { get; set; }
+    public int ProjectId { get; set; }
 
-        public string ProjectName { get; set; } = null!;
+    public string ProjectName { get; set; } = null!;
 
-        public DateTime StartDate { get; set; }
-            
-        public DateTime EndDate { get; set; }
+    public DateTime StartDate { get; set; }
 
-        public string Status { get; set; } = null!;
+    public DateTime EndDate { get; set; }
 
-        public string Description { get; set; } = null!;
+    public string Status { get; set; } = null!;
 
-        public virtual ICollection<TaskTbl> TaskTbls { get; set; } = new List<TaskTbl>();
-    }
+    public string Description { get; set; } = null!;
+
+    public virtual ICollection<TaskTbl> TaskTbls { get; set; } = new List<TaskTbl>();
 }
