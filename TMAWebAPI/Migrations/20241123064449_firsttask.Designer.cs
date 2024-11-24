@@ -12,7 +12,7 @@ using TMAWebAPI.Models;
 namespace TMAWebAPI.Migrations
 {
     [DbContext(typeof(TMADbContext))]
-    [Migration("20241123054005_firsttask")]
+    [Migration("20241123064449_firsttask")]
     partial class firsttask
     {
         /// <inheritdoc />

@@ -1,0 +1,161 @@
+﻿﻿
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Profile</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+        }
+
+        button {
+            padding: 10px 15px;
+            margin: 5px 0;
+            background-color: navy;
+            color: aliceblue;
+            border-block: solid;
+            border-block-color: darkblue;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bolder;
+            width: 100%;
+            font-size: larger;
+        }
+
+        form {
+            margin: 20px;
+            padding: 20px;
+        }
+
+            form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                font-size: large;
+            }
+
+            form input, form select, form button {
+                margin-bottom: 15px;
+                width: 100%;
+                padding: 8px;
+                font-size: 1rem;
+            }
+
+        #responseMessage {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #updateProfileForm > img {
+            position: absolute;
+            margin-left: 400px;
+            margin-top: 45px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Profile</h1>
+    <form id="updateProfileForm">
+        <!--<input type="hidden" id="userId" />-->
+        <!-- Replace with the actual logged-in user ID -->
+
+        <img src="https://cdni.iconscout.com/illustration/premium/thumb/update-your-profile-1946860-1648379.png" style="width: 650px; height: 500px;">
+
+        <label for="id">UserName:</label>
+        <input type="text" id="id" placeholder="Enter userId" required />
+
+        <label for="userName">UserName:</label>
+        <input type="text" id="userName" placeholder="Enter username" required />
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" placeholder="Enter password" required />
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" placeholder="Enter email" required />
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" placeholder="Enter phone number" required />
+
+        @*<label for="userRole">User Role:</label>
+            <select id="userRole">
+                <option value="Admin">Admin</option>
+                <option value="User">User</option>
+            </select>*@
+        <input type="hidden" id="userRole" />
+
+        <button type="button" onclick="updateUserProfile()">Update Profile</button>
+    </form>
+
+    <label id="responseMessage" style="color:green"></label>
+
+    <script>
+    const apiUrl = 'https://localhost:7000/api/AspNetUsers'; // Replace with your actual API URL
+
+    // Function to display messages
+    function displayMessage(message, isError = false) {
+        const responseLabel = document.getElementById("responseMessage");
+        responseLabel.style.color = isError ? "red" : "green";
+        responseLabel.textContent = message;
+    }
+
+    // Update User Profile
+    function updateUserProfile() {
+        const id = document.getElementById("id").value;
+        const userName = document.getElementById("userName").value;
+        const password = document.getElementById("password").value;
+        const email = document.getElementById("email").value;
+        const phoneNumber = document.getElementById("phoneNumber").value;
+        const userRole = document.getElementById("userRole").value;
+
+        if (!userName || !password || !email || !phoneNumber) {
+            return displayMessage("All fields are required.", true);
+        }
+
+        const requestData = {
+            id: id,
+            userName: userName,
+            password: password,
+            email: email,
+            phoneNumber: phoneNumber,
+            userRole: userRole
+        };
+
+        fetch(`${apiUrl}/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(requestData)
+        })
+            .then(response => {
+                if (response.ok) {
+                    // Check if the response has content
+                    if (response.status === 204) {
+                        // Handle no content case
+                        return { message: "Profile updated successfully." };
+                    }
+                    return response.json(); // Parse JSON if response exists
+                }
+                return response.json().then(err => {
+                    throw new Error(err?.message || "Failed to update profile.");
+                });
+            })
+            .then(data => {
+                const message = data?.message || "Profile updated successfully!";
+                displayMessage(message);
+            })
+            .catch(error => {
+                displayMessage(`Error: ${error.message}`, true);
+            });
+    }
+
+    </script>
+</body>
+</html>

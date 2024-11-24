@@ -1,0 +1,168 @@
+﻿﻿
+
+@{
+    ViewBag.Title = "AssignTask";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User API - CRUD Operations</title>
+</head>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+    }
+
+    button {
+        width: 200px;
+        text-align: center;
+        background-color: navy;
+        color: aliceblue;
+        border-block: solid;
+        border-block-color: darkblue;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bolder;
+        font-size: larger;
+        margin-left: 38px;
+    }
+
+    form {
+        margin: 20px;
+        padding: 20px;
+        text-align: left;
+    }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: large;
+            /*            align-content: center;*/
+        }
+
+        form input, form select, form button {
+            margin-bottom: 15px;
+            padding: 8px;
+            font-size: 1rem;
+        }
+
+        form input {
+            width: 350px;
+        }
+
+    #responseMessage {
+        display: block;
+        margin-top: 18px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    #userForm > img {
+        position: absolute;
+        margin-left: 600px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+</style>
+<body>
+    @*<h1>User API - CRUD Operations</h1>
+
+        <h2>Add or Update User</h2>*@
+
+
+    <form id="userForm">
+        <img src="https://www.freeiconspng.com/uploads/checkmark-png-16.png" id="img" style="width: 470px; height: 582px;">
+        <label for="UserId">User ID:</label>
+        <input type="text" id="UserId" name="UserId" required placeholder="Enter UserId">
+        <br />
+        <br />
+
+        <h4>Or</h4>
+        <br />
+
+        <label for="Email">Email:</label>
+        <input type="text" id="Email" name="Email" required placeholder="Enter Email">
+        <br /><br />
+        <button type="button" onclick="validateUserAndRedirect()">Validate User</button>
+
+
+    </form>
+
+    <label id="responseMessage"></label>
+
+    @*<div id="usersList"></div>*@
+
+    <script>
+        const apiUrl = 'https://localhost:7000/api/AspNetUsers';  // User API endpoint for validation
+        const taskPageUrl = '@Url.Action("TaskTbl", "AspNetUser")';  // Replace with the URL of your task assignment page
+
+        // Function to validate user and redirect to task view if valid, or show an error if invalid
+        function validateUserAndRedirect() {
+            const userId = document.getElementById("UserId").value;
+            const email = document.getElementById("Email").value;
+
+            if (!userId && !email) {
+                return displayMessage("Please enter User ID or Email to validate", true);
+            }
+
+            // Step 1: Check if User ID is provided
+            if (userId) {
+            fetch(`${apiUrl}/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`User with ID ${userId} not found`);
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    // If user exists, redirect to the task assignment page
+                    window.location.href = taskPageUrl;  // Replace taskPageUrl with the actual task assignment page URL
+                })
+                .catch(error => {
+                    displayMessage(`Error: ${error.message}`, true); // Display error message if user is not found
+                });
+        }
+         // Step 2: Check if Email is provided if User ID is not found
+            else if (email) {
+            fetch(`${apiUrl}/email/${email}`, {  // Assuming there's an endpoint for email validation
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        // If Email is valid, redirect to task page
+                        window.location.href = taskPageUrl;
+                    } else {
+                        throw new Error(`User with Email ${email} not found`);
+                    }
+                })
+                .catch(error => {
+                    displayMessage(`Error: ${error.message}`, true);
+                });
+        }
+        }
+
+        // Display success or error messages
+        function displayMessage(message, isError = false) {
+            const responseLabel = document.getElementById("responseMessage");
+            responseLabel.style.color = isError ? "red" : "green";
+            responseLabel.textContent = message;
+        }
+
+    </script>
+</body>
+</html>

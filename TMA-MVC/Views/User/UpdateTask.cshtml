@@ -1,0 +1,167 @@
+﻿﻿
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task Status</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            padding-top: 15px;
+        }
+
+        button {
+            text-align: center;
+            background-color: navy;
+            color: aliceblue;
+            border-block: solid;
+            border-block-color: darkblue;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bolder;
+            font-size: larger;
+            width: 200px;
+            height: 40px;
+            margin-left: 40px;
+        }
+
+        form {
+            margin: 20px;
+            padding: 20px;
+            text-align: left;
+        }
+
+            form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                font-size: large;
+                /*            align-content: center;*/
+            }
+
+            form input, form select, form button {
+                height: 40px;
+                margin-bottom: 15px;
+                padding: 8px;
+                font-size: 1rem;
+            }
+
+            form input, form select {
+                width: 350px;
+            }
+
+        #responseMessage {
+            display: block;
+            margin-top: 18px;
+            font-weight: bold;
+            text-align: center;
+        }
+
+        #updateStatusForm > img {
+            position: absolute;
+            margin-left: 680px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Update Task Status</h1>
+    <form id="updateStatusForm">
+        <img src="https://static.vecteezy.com/system/resources/previews/015/124/638/original/time-task-gradient-icon-png.png" id="img" style="width: 380px; height: 490px;"> <label for="taskId">Task Id: </label>
+        <input type="number" id="taskId" placeholder="Enter Task ID" required>
+        <br /><br />
+
+        <label for="newStatus">New Status: </label>
+        <select id="newStatus">
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+        </select>
+        <br /><br />
+
+        <label for="priority">Priority: </label>
+        <select id="priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+        <br /><br />
+
+        <label for="taskEndDate">Task End Date: </label>
+        <input type="date" id="taskEndDate" required>
+        <br /><br />
+
+        <button type="button" onclick="updateTaskStatus()">Update Task</button>
+    </form>
+
+    <label id="responseMessage" style="color:green"></label>
+
+    <script>
+        const apiUrl = 'https://localhost:7000/api/TaskTbls'; // Base API URL
+
+        // Display success or error messages
+        function displayMessage(message, isError = false) {
+            const responseLabel = document.getElementById("responseMessage");
+            responseLabel.style.color = isError ? "red" : "green";
+            responseLabel.textContent = message;
+        }
+
+        // Update task status
+        function updateTaskStatus() {
+            const taskId = document.getElementById("taskId").value;
+            const newStatus = document.getElementById("newStatus").value;
+            const priority = document.getElementById("priority").value;
+            const taskEndDate = document.getElementById("taskEndDate").value;
+
+            if (!taskId) return displayMessage("Please enter Task ID to update status", true);
+            if (!newStatus) return displayMessage("Please select a status to update", true);
+            if (!priority) return displayMessage("Please select a priority", true);
+            if (!taskEndDate) return displayMessage("Please select a task end date", true);
+
+            // Check if the task EndDate is within the next 24 hours
+            const endDate = new Date(taskEndDate);
+            const now = new Date();
+            const hoursToDueDate = (endDate - now) / (1000 * 60 * 60);
+            if (hoursToDueDate <= 24 && hoursToDueDate > 0) {
+                alert("This task is due within the next 24 hours. Please prioritize it!");
+            }
+
+            // Prepare the data for the PATCH request
+            const requestData = {
+                status: newStatus,
+                priority: priority,
+                taskEndDate: taskEndDate
+            };
+
+            fetch(`${apiUrl}/${taskId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData) // Sending data to the server
+            })
+                .then(response => {
+                    // Check if response is OK
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err?.message || "Failed to update task.");
+                        });
+                    }
+                    return response.json(); // Parse response JSON
+                })
+                .then(data => {
+                    const message = data?.Message || "Task updated successfully.";
+                    displayMessage(message);
+                })
+                .catch(error => displayMessage(`Error: ${error.message}`, true));
+        }
+    </script>
+</body>
+</html>
