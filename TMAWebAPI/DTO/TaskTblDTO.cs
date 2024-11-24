@@ -5,7 +5,7 @@ namespace TMAWebAPI.DTO
     public class TaskTblDTO
     {
         [Key]
-        [Required]
+        
         public int TaskId { get; set; }
 
         [Required]

@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using TMAWebAPI.Models;
 using TMAWebAPI.DTO;
+using Serilog;
 
 namespace TMAWebAPI.Controllers
 {
