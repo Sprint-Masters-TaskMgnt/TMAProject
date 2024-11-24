@@ -1,4 +1,4 @@
-﻿﻿
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,8 +18,7 @@
             margin: 5px 0;
             background-color: navy;
             color: aliceblue;
-            border-block: solid;
-            border-block-color: darkblue;
+            border: solid darkblue;
             border-radius: 4px;
             cursor: pointer;
             font-weight: bolder;
@@ -39,18 +38,48 @@
                 font-size: large;
             }
 
-            form input, form select, form button {
+            form input, form button {
                 margin-bottom: 15px;
                 width: 100%;
                 padding: 8px;
                 font-size: 1rem;
             }
 
-        #responseMessage {
-            display: block;
-            margin-top: 18px;
-            font-weight: bold;
+        #popup {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color:green;
+            padding: 20px;
+            background-color: white;
+            border: 1px solid #ccc;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            display: none;
+            z-index: 1000;
             text-align: center;
+        }
+
+            #popup button {
+                margin-top: 10px;
+                padding: 10px 15px;
+                background-color: navy;
+                color: aliceblue;
+                border: solid darkblue;
+                border-radius: 4px;
+                cursor: pointer;
+                font-size: medium;
+            }
+
+        #overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            z-index: 999;
         }
 
         #updateProfileForm > img {
@@ -63,99 +92,125 @@
 <body>
     <h1>Update Profile</h1>
     <form id="updateProfileForm">
-        <!--<input type="hidden" id="userId" />-->
-        <!-- Replace with the actual logged-in user ID -->
 
         <img src="https://cdni.iconscout.com/illustration/premium/thumb/update-your-profile-1946860-1648379.png" style="width: 650px; height: 500px;">
 
-        <label for="id">UserName:</label>
-        <input type="text" id="id" placeholder="Enter userId" required />
+        <label for="id">User ID:</label>
+        <input type="number" id="id" placeholder="Enter User ID" required onblur="fetchUserData()" />
 
-        <label for="userName">UserName:</label>
-        <input type="text" id="userName" placeholder="Enter username" required />
+        <label for="userName">Username:</label>
+        <input type="text" id="userName" placeholder="Enter Username" required />
 
         <label for="password">Password:</label>
-        <input type="password" id="password" placeholder="Enter password" required />
+        <input type="password" id="password" placeholder="Enter Password" required />
 
         <label for="email">Email:</label>
-        <input type="email" id="email" placeholder="Enter email" required />
+        <input type="email" id="email" placeholder="Enter Email" required />
 
         <label for="phoneNumber">Phone Number:</label>
-        <input type="text" id="phoneNumber" placeholder="Enter phone number" required />
+        <input type="text" id="phoneNumber" placeholder="Enter Phone Number" required />
 
-        @*<label for="userRole">User Role:</label>
-            <select id="userRole">
-                <option value="Admin">Admin</option>
-                <option value="User">User</option>
-            </select>*@
-        <input type="hidden" id="userRole" />
+        <!-- Hidden Role ID Field -->
+        <input type="hidden" id="roleId" value="2" />
 
         <button type="button" onclick="updateUserProfile()">Update Profile</button>
     </form>
 
-    <label id="responseMessage" style="color:green"></label>
+    <div id="overlay"></div>
+    <div id="popup">
+        <p id="popupMessage"></p>
+        <button onclick="closePopup()">Close</button>
+    </div>
 
     <script>
-    const apiUrl = 'https://localhost:7000/api/AspNetUsers'; // Replace with your actual API URL
+        const apiUrl = 'https://localhost:7071/api/Users'; // Ensure the URL matches your API route
 
-    // Function to display messages
-    function displayMessage(message, isError = false) {
-        const responseLabel = document.getElementById("responseMessage");
-        responseLabel.style.color = isError ? "red" : "green";
-        responseLabel.textContent = message;
-    }
+        // Display the popup message
+        function showPopup(message) {
+            const popupMessage = document.getElementById("popupMessage");
+            const popup = document.getElementById("popup");
+            const overlay = document.getElementById("overlay");
 
-    // Update User Profile
-    function updateUserProfile() {
-        const id = document.getElementById("id").value;
-        const userName = document.getElementById("userName").value;
-        const password = document.getElementById("password").value;
-        const email = document.getElementById("email").value;
-        const phoneNumber = document.getElementById("phoneNumber").value;
-        const userRole = document.getElementById("userRole").value;
-
-        if (!userName || !password || !email || !phoneNumber) {
-            return displayMessage("All fields are required.", true);
+            popupMessage.textContent = message;
+            popup.style.display = "block";
+            overlay.style.display = "block";
         }
 
-        const requestData = {
-            id: id,
-            userName: userName,
-            password: password,
-            email: email,
-            phoneNumber: phoneNumber,
-            userRole: userRole
-        };
+        // Close the popup
+        function closePopup() {
+            document.getElementById("popup").style.display = "none";
+            document.getElementById("overlay").style.display = "none";
+        }
 
-        fetch(`${apiUrl}/${id}`, {
-            method: 'PUT',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(requestData)
-        })
-            .then(response => {
-                if (response.ok) {
-                    // Check if the response has content
-                    if (response.status === 204) {
-                        // Handle no content case
-                        return { message: "Profile updated successfully." };
+        // Fetch user data by ID
+        function fetchUserData() {
+            const id = document.getElementById("id").value.trim();
+            if (!id) return;
+
+            fetch(`${apiUrl}/${id}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("User not found.");
                     }
-                    return response.json(); // Parse JSON if response exists
-                }
-                return response.json().then(err => {
-                    throw new Error(err?.message || "Failed to update profile.");
+                    return response.json();
+                })
+                .then(data => {
+                    document.getElementById("userName").value = data.userName || "";
+                    document.getElementById("password").value = data.passwordHash || "";
+                    document.getElementById("email").value = data.email || "";
+                    document.getElementById("phoneNumber").value = data.phoneNumber || "";
+                })
+                .catch(error => {
+                    showPopup(`Error: ${error.message}`);
                 });
-            })
-            .then(data => {
-                const message = data?.message || "Profile updated successfully!";
-                displayMessage(message);
-            })
-            .catch(error => {
-                displayMessage(`Error: ${error.message}`, true);
-            });
-    }
+        }
 
+        // Update user profile
+        function updateUserProfile() {
+            const id = document.getElementById("id").value.trim();
+            const userName = document.getElementById("userName").value.trim();
+            const password = document.getElementById("password").value.trim();
+            const email = document.getElementById("email").value.trim();
+            const phoneNumber = document.getElementById("phoneNumber").value.trim();
+            const roleId = document.getElementById("roleId").value.trim();
+
+            if (!id || !userName || !password || !email || !phoneNumber) {
+                return showPopup("All fields are required.");
+            }
+
+            const requestData = {
+                email: email,
+                phoneNumber: phoneNumber,
+                passwordHash: password,
+                userName: userName,
+                roleId: parseInt(roleId, 10) // Ensure RoleId is an integer
+            };
+
+            fetch(`${apiUrl}/${id}`, {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(requestData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(err => {
+                            throw new Error(err.message || "Failed to update profile.");
+                        });
+                    }
+                    return response.status === 204
+                        ? { message: "Profile updated successfully." }
+                        : response.json();
+                })
+                .then(data => {
+                    const message = data?.message || "Profile updated successfully!";
+                    showPopup(message);
+                })
+                .catch(error => {
+                    showPopup(`Error: ${error.message}`);
+                });
+        }
     </script>
 </body>
 </html>

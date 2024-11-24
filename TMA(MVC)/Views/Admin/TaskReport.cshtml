@@ -1,5 +1,4 @@
-﻿﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,80 +7,133 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
-            background-size: cover;
-            background-repeat: no-repeat;
-            padding-top: 15px;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
         }
 
-        button {
+        h1 {
             text-align: center;
-            background-color: navy;
-            color: aliceblue;
-            border-block: solid;
-            border-block-color: darkblue;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bolder;
-            font-size: larger;
-            width: 200px;
-            height: 40px;
-            margin-left: 40px;
+            color: navy;
         }
 
         form {
-            margin: 20px;
-            padding: 20px;
-            text-align: left;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
             form label {
-                display: block;
-                margin-bottom: 5px;
-                font-weight: bold;
-                font-size: large;
+                font-size: 1.2rem;
             }
 
             form input {
-                height: 40px;
-                margin-bottom: 15px;
+                margin-left: 10px;
                 padding: 8px;
                 font-size: 1rem;
-                width: 350px;
+                width: 250px;
             }
 
-        #responseMessage {
-            display: block;
-            margin-top: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
+            form button {
+                padding: 10px 20px;
+                font-size: 1rem;
+                background-color: navy;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
 
+                form button:hover {
+                    background-color: darkblue;
+                }
 
-        #userIdForm > img {
-            position: absolute;
-            margin-left: 680px;
+        .report-container {
+            display: flex;
+            gap: 20px;
             margin-top: 20px;
-            margin-bottom: 40px;
         }
+
+        .user-details,
+        .tasks {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-details {
+            width: 30%;
+        }
+
+        .tasks {
+            flex: 1;
+        }
+
+        .tasks-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .task-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: calc(50% - 20px); /* Two columns */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+            .task-box strong {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+        #downloadButtonContainer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #downloadReportBtn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            #downloadReportBtn:hover {
+                background-color: darkgreen;
+            }
     </style>
 </head>
 <body>
     <h1>User Task Report</h1>
 
-
     <!-- Input to enter User ID -->
-    <h2>Enter User ID</h2>
     <form id="userIdForm">
-        <img src="https://www.allen.ac.in/ace2324/assets/images/register.png" id="img" style="width: 324px; height: 324px;">
-
         <label for="userId">User ID:</label>
-        <input type="text" id="userId" name="userId" required>
+        <input type="text" id="userId" name="userId" placeholder="Enter User ID" required>
         <button type="button" onclick="generateReport()">Generate Report</button>
     </form>
 
-    <!-- Area to display the report -->
-    <div id="report"></div>
+    <!-- Report Container -->
+    <div class="report-container" id="reportContainer">
+        <!-- User Details Section -->
+        <div class="user-details" id="userDetails">
+            <h2>User Details</h2>
+            <p>Enter a User ID to view details</p>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="tasks" id="tasks">
+            <h2>Tasks</h2>
+            <p>No tasks found yet.</p>
+        </div>
+    </div>
 
     <!-- Download button -->
     <div id="downloadButtonContainer" style="display: none;">
@@ -89,14 +141,14 @@
     </div>
 
     <script>
-        const tasksApiUrl = 'https://localhost:7000/api/UserTaskReport/TaskTbls';  // Replace with your actual tasks API endpoint
-        const userApiUrl = 'https://localhost:7000/api/UserTaskReport/AspNetUsers';  // Replace with your actual users API endpoint
+        const tasksApiUrl = 'https://localhost:7071/api/UserTaskReport/TaskTbls'; // Replace with your API endpoint
+        const userApiUrl = 'https://localhost:7071/api/UserTaskReport/Users'; // Replace with your API endpoint
 
         function generateReport() {
-            const userId = document.getElementById("userId").value;
+            const userId = document.getElementById("userId").value.trim();
 
             if (!userId) {
-                displayError("Please enter a valid User ID.");
+                alert("Please enter a valid User ID.");
                 return;
             }
 
@@ -114,56 +166,54 @@
                             return response.json();
                         })
                         .then(tasks => {
-                            // Filter tasks to only include those for the specific user
                             displayReport(user, tasks);
                         })
-                        .catch(error => displayError(error.message));
+                        .catch(error => alert(error.message));
                 })
-                .catch(error => displayError(error.message));
+                .catch(error => alert(error.message));
         }
 
         function displayReport(user, tasks) {
-            const reportDiv = document.getElementById("report");
-
             // User Details
-            let reportHtml = `
-                    <h2>User Details</h2>
-                    <p><strong>User ID:</strong> ${user.userId}</p>
-                    <p><strong>Name:</strong> ${user.userName} </p>
-                    <p><strong>Email:</strong> ${user.email}</p>
-                    <h2>Tasks Assigned</h2>
-                `;
+            const userDetailsDiv = document.getElementById("userDetails");
+            userDetailsDiv.innerHTML = `
+                        <h2>User Details</h2>
+                        <p><strong>User ID:</strong> ${user.userId}</p>
+                        <p><strong>Name:</strong> ${user.userName}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                    `;
 
-            // Tasks List
+            // Tasks
+            const tasksDiv = document.getElementById("tasks");
             if (tasks.length === 0) {
-                reportHtml += "<p>No tasks found for this user.</p>";
+                tasksDiv.innerHTML = "<h2>Tasks</h2><p>No tasks found for this user.</p>";
             } else {
-                reportHtml += "<ul>";
+                tasksDiv.innerHTML = "<h2>Tasks</h2>";
+                const tasksGrid = document.createElement("div");
+                tasksGrid.className = "tasks-grid";
+
                 tasks.forEach(task => {
-                    reportHtml += `
-                            <li>
-                                <p><strong>Task ID:</strong> ${task.taskId}</p>
-                                <p><strong>Task Name:</strong> ${task.taskName}</p>
-                                <p><strong>Status:</strong> ${task.status}</p>
-                            </li>
-                        `;
+                    const taskBox = document.createElement("div");
+                    taskBox.className = "task-box";
+                    taskBox.innerHTML = `
+                                <strong>Task Name:</strong> ${task.taskName}
+                                <strong>Status:</strong> ${task.status}
+                                <strong>Priority:</strong> ${task.priority}
+                                <strong>Start Date:</strong> ${new Date(task.startDate).toLocaleDateString()}
+                                <strong>End Date:</strong> ${new Date(task.endDate).toLocaleDateString()}
+                            `;
+                    tasksGrid.appendChild(taskBox);
                 });
-                reportHtml += "</ul>";
+
+                tasksDiv.appendChild(tasksGrid);
             }
 
-            reportDiv.innerHTML = reportHtml;
-
-            // Show the download button
-            document.getElementById("downloadButtonContainer").style.display = "block";
+            // Show download button
+            const downloadButtonContainer = document.getElementById("downloadButtonContainer");
+            downloadButtonContainer.style.display = "block";
             document.getElementById("downloadReportBtn").onclick = () => downloadReport(user.userId);
         }
 
-        function displayError(message) {
-            const reportDiv = document.getElementById("report");
-            reportDiv.innerHTML = `<p class="error">${message}</p>`;
-        }
-
-        // Function to handle report download
         function downloadReport(userId) {
             const downloadUrl = `${tasksApiUrl}/${userId}/downloadReport`;
 
@@ -180,9 +230,7 @@
                     a.click();
                     window.URL.revokeObjectURL(url);
                 })
-                .catch(error => {
-                    displayError("Error downloading report: " + error.message);
-                });
+                .catch(error => alert("Error downloading report: " + error.message));
         }
     </script>
 </body>

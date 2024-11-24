@@ -99,8 +99,8 @@
     @*<div id="usersList"></div>*@
 
     <script>
-        const apiUrl = 'https://localhost:7000/api/AspNetUsers';  // User API endpoint for validation
-        const taskPageUrl = '@Url.Action("TaskTbl", "AspNetUser")';  // Replace with the URL of your task assignment page
+        const apiUrl = 'https://localhost:7071/api/Users';  // User API endpoint for validation
+        const taskPageUrl = '@Url.Action("TaskTbl", "User")';  // Replace with the URL of your task assignment page
 
         // Function to validate user and redirect to task view if valid, or show an error if invalid
         function validateUserAndRedirect() {
