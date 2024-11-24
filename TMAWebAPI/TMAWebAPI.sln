@@ -5,7 +5,7 @@ VisualStudioVersion = 17.11.35327.3
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TMAWebAPI", "TMAWebAPI.csproj", "{5030025A-E423-4F74-A4E3-D327EA9D7206}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TMA(MVC)", "..\TMA(MVC)\TMA(MVC).csproj", "{A802D8E2-BD9F-48EB-AE32-9B59136F4DA4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskMgnt(MVC)", "..\TaskMgnt(MVC)\TaskMgnt(MVC).csproj", "{720D14A0-2E66-4CAE-800A-ACDE01C1A0C4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -17,10 +17,10 @@ Global
 		{5030025A-E423-4F74-A4E3-D327EA9D7206}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5030025A-E423-4F74-A4E3-D327EA9D7206}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5030025A-E423-4F74-A4E3-D327EA9D7206}.Release|Any CPU.Build.0 = Release|Any CPU
-		{A802D8E2-BD9F-48EB-AE32-9B59136F4DA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{A802D8E2-BD9F-48EB-AE32-9B59136F4DA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{A802D8E2-BD9F-48EB-AE32-9B59136F4DA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{A802D8E2-BD9F-48EB-AE32-9B59136F4DA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{720D14A0-2E66-4CAE-800A-ACDE01C1A0C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{720D14A0-2E66-4CAE-800A-ACDE01C1A0C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{720D14A0-2E66-4CAE-800A-ACDE01C1A0C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{720D14A0-2E66-4CAE-800A-ACDE01C1A0C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
