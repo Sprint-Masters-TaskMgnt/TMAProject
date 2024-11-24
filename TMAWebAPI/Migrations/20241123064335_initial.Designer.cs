@@ -12,8 +12,8 @@ using TMAWebAPI.Models;
 namespace TMAWebAPI.Migrations
 {
     [DbContext(typeof(TMADbContext))]
-    [Migration("20241123054005_firsttask")]
-    partial class firsttask
+    [Migration("20241123064335_initial")]
+    partial class initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
