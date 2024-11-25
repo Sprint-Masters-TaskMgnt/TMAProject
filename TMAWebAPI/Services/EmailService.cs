@@ -18,7 +18,7 @@ namespace TMADbAPI.Services
         private readonly int _smtpPort = 587; // Replace with your SMTP port
         private readonly string _emailFrom = "samalaabhinaya2606@gmail.com"; // Replace with your sender email
         private readonly string _emailPassword = "nozq zggr yklc opre"; // Replace with your app-specific password
-
+       
         private readonly TMADbContext _context;
         public EmailService(TMADbContext TMADbContext)
         {
