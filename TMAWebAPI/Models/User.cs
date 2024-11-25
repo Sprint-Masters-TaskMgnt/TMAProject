@@ -15,7 +15,7 @@ public partial class User
 
     public string UserName { get; set; } = null!;
 
-    public int? RoleId { get; set; }
+    public int RoleId { get; set; } = 2;
 
     public virtual Role? Role { get; set; }
 

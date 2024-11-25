@@ -169,14 +169,21 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\Startup.Auth.cs" />
     <Compile Include="Controllers\AccountController.cs" />
+    <Compile Include="Controllers\AdminController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
+    <Compile Include="Controllers\TaskTblController.cs" />
+    <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="DTO\CreateUserDTO.cs" />
+    <Compile Include="DTO\RoleUserDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\AccountViewModels.cs" />
     <Compile Include="Models\IdentityModels.cs" />
     <Compile Include="Models\ManageViewModels.cs" />
+    <Compile Include="Models\SessionModel.cs" />
+    <Compile Include="Models\User.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>
@@ -217,6 +224,7 @@
     <Content Include="Scripts\jquery.validate.unobtrusive.js" />
     <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
     <Content Include="Scripts\modernizr-2.8.3.js" />
+    <Content Include="TMHomeImg.jpg" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
@@ -251,6 +259,22 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
+    <Content Include="Views\Admin\Dashboard.cshtml" />
+    <Content Include="Views\Admin\ProjectManagement.cshtml" />
+    <Content Include="Views\Admin\ProjectReport.cshtml" />
+    <Content Include="Views\Admin\Projects.cshtml" />
+    <Content Include="Views\Admin\TaskReport.cshtml" />
+    <Content Include="Views\Admin\Tasks.cshtml" />
+    <Content Include="Views\Admin\Users.cshtml" />
+    <Content Include="Views\User\Dashboard.cshtml" />
+    <Content Include="Views\User\AssignTask.cshtml" />
+    <Content Include="Views\User\ProjectManagement.cshtml" />
+    <Content Include="Views\User\TaskReport.cshtml" />
+    <Content Include="Views\User\TaskTbl.cshtml" />
+    <Content Include="Views\User\UpdateProfile.cshtml" />
+    <Content Include="Views\User\UpdateTask.cshtml" />
+    <Content Include="Views\TaskTbl\index.cshtml" />
+    <Content Include="Views\Home\Home1.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

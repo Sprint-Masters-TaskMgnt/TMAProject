@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Mvc;
 using TMAWebAPI.DTO;
 using TMAWebAPI.Models;
+using TMAWebAPI.DTO;
 
 using Microsoft.EntityFrameworkCore;
 
@@ -61,6 +62,7 @@ namespace TMAWebAPI.Controllers
             [HttpPost]
             public async Task<IActionResult> CreateUser([FromBody] CreateUserDTO createUserDTO)
             {
+          
                 if (!ModelState.IsValid)
                 {
                     return BadRequest(ModelState);
@@ -73,7 +75,7 @@ namespace TMAWebAPI.Controllers
                     PhoneNumber = createUserDTO.PhoneNumber,
                     PasswordHash = createUserDTO.PasswordHash,
                     UserName = createUserDTO.UserName,
-                    RoleId = createUserDTO.RoleId // Assuming UserRole is mapped as int
+                RoleId = createUserDTO.RoleId  // Assuming UserRole is mapped as int
                 };
 
                 _context.Users.Add(user);
@@ -125,6 +127,15 @@ namespace TMAWebAPI.Controllers
 
                 return NoContent();
             }
+
+
+        [HttpGet("GetEmail/{email}")]
+        public async Task<ActionResult<User>> GetUserByEmail(string email)
+        {
+            return Ok(await _context.Users.FirstAsync(users => users.Email.Equals(email)));
+        }
+
+
         }
     }
 

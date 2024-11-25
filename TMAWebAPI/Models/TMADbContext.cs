@@ -35,7 +35,7 @@ public partial class TMADbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-        => optionsBuilder.UseSqlServer("Data Source=(localdb)\\mssqllocaldb;Initial Catalog=TMADB;Integrated Security=True;TrustServerCertificate=True");
+        => optionsBuilder.UseSqlServer("Data Source=iamanu\\sqlexpress;Initial Catalog=TMADB;Integrated Security=True;TrustServerCertificate=True");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -62,8 +62,9 @@ public partial class TMADbContext : DbContext
             entity.Property(e => e.LockoutEndDateUtc).HasColumnType("datetime");
             entity.Property(e => e.UserName).HasMaxLength(256);
             entity.Property(e => e.UserRole)
-                .HasMaxLength(500)
-                .HasDefaultValue("User");
+                .HasMaxLength(10)
+                .HasDefaultValue("User")
+                .IsFixedLength();
 
             entity.HasMany(d => d.Roles).WithMany(p => p.Users)
                 .UsingEntity<Dictionary<string, object>>(
@@ -129,11 +130,6 @@ public partial class TMADbContext : DbContext
             entity.Property(e => e.ProjectId).ValueGeneratedNever();
         });
 
-        modelBuilder.Entity<Role>(entity =>
-        {
-            entity.Property(e => e.RoleId).ValueGeneratedNever();
-        });
-
         modelBuilder.Entity<TaskTbl>(entity =>
         {
             entity.HasKey(e => e.TaskId);
@@ -145,17 +141,13 @@ public partial class TMADbContext : DbContext
             entity.HasOne(d => d.AssignedToUser).WithMany(p => p.TaskTbls)
                 .HasForeignKey(d => d.AssignedToUserId)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TaskTbls_Users1");
+                .HasConstraintName("FK_TaskTbls_Users");
 
-            entity.HasOne(d => d.Project).WithMany(p => p.TaskTbls)
-                .HasForeignKey(d => d.ProjectId)
-                .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("FK_TaskTbls_Projects");
+            entity.HasOne(d => d.Project).WithMany(p => p.TaskTbls).HasForeignKey(d => d.ProjectId);
         });
 
         modelBuilder.Entity<User>(entity =>
         {
-            entity.Property(e => e.Id).ValueGeneratedNever();
             entity.Property(e => e.RoleId).HasDefaultValue(2);
 
             entity.HasOne(d => d.Role).WithMany(p => p.Users)

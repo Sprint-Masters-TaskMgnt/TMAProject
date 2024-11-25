@@ -1,0 +1,230 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Update Task Status</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+            background-size: cover;
+            background-repeat: no-repeat;
+            padding-top: 15px;
+        }
+
+        button {
+            text-align: center;
+            background-color: navy;
+            color: aliceblue;
+            border-block: solid;
+            border-block-color: darkblue;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bolder;
+            font-size: larger;
+            width: 200px;
+            height: 40px;
+            margin-left: 40px;
+        }
+
+        form {
+            margin: 20px;
+            padding: 20px;
+            text-align: left;
+        }
+
+            form label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                font-size: large;
+            }
+
+            form input, form select, form button {
+                height: 40px;
+                margin-bottom: 15px;
+                padding: 8px;
+                font-size: 1rem;
+            }
+
+            form input, form select {
+                width: 350px;
+            }
+
+        #updateStatusForm > img {
+            position: absolute;
+            margin-left: 680px;
+            margin-top: 20px;
+            margin-bottom: 40px;
+        }
+
+
+        /* Modal styles */
+        #successPopup {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+        }
+
+        #popupContent {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 40%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #popupMessage {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        #closePopup {
+            background-color: navy;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            #closePopup:hover {
+                background-color: darkred;
+            }
+    </style>
+</head>
+<body>
+    <h1>Update Task Status</h1>
+        <form id="updateStatusForm">
+            <img src="https://static.vecteezy.com/system/resources/previews/015/124/638/original/time-task-gradient-icon-png.png" id="img" style="width: 380px; height: 490px;">
+            <label for="taskId">Task Id: </label>
+            <input type="number" id="taskId" placeholder="Enter Task ID" required>
+            <br /><br />
+
+            <label for="newStatus">New Status: </label>
+            <select id="newStatus">
+                <option value="Not Started">Not Started</option>
+                <option value="In Progress">In Progress</option>
+                <option value="Completed">Completed</option>
+            </select>
+            <br /><br />
+
+            <label for="priority">Priority: </label>
+            <select id="priority">
+                <option value="Low">Low</option>
+                <option value="Medium">Medium</option>
+                <option value="High">High</option>
+            </select>
+            <br /><br />
+
+            <label for="taskEndDate">Task End Date: </label>
+            <input type="date" id="taskEndDate" required>
+            <br /><br />
+
+            <button type="button" onclick="updateTaskStatus()">Update Task</button>
+        </form>
+
+        <!-- Success Popup -->
+        <div id="successPopup">
+            <div id="popupContent">
+                <p id="popupMessage">Updated Successfully!</p>
+                <button id="closePopup" onclick="closeSuccessPopup()">Close</button>
+            </div>
+        </div>
+
+        <script>
+            const apiUrl = 'https://localhost:7071/api/TaskTbls'; // Base API URL
+
+            // Show success popup
+            function showSuccessPopup(message) {
+                const popupMessage = document.getElementById('popupMessage');
+                popupMessage.textContent = message || "Updated Successfully!";
+                document.getElementById('successPopup').style.display = 'block';
+            }
+
+            // Close success popup
+            function closeSuccessPopup() {
+                document.getElementById('successPopup').style.display = 'none';
+            }
+
+            // Update task status
+            // Update task status
+            function updateTaskStatus() {
+                const taskId = document.getElementById("taskId").value;
+                const newStatus = document.getElementById("newStatus").value;
+                const priority = document.getElementById("priority").value;
+                const taskEndDate = document.getElementById("taskEndDate").value;
+
+                if (!taskId) return alert("Please enter Task ID to update status");
+                if (!newStatus) return alert("Please select a status to update");
+                if (!priority) return alert("Please select a priority");
+                if (!taskEndDate) return alert("Please select a task end date");
+
+                const endDate = new Date(taskEndDate);
+                const now = new Date();
+                const hoursToDueDate = (endDate - now) / (1000 * 60 * 60);
+                if (hoursToDueDate <= 24 && hoursToDueDate > 0) {
+                    alert("This task is due within the next 24 hours. Please prioritize it!");
+                }
+
+                const requestData = {
+                    status: newStatus,
+                    priority: priority,
+                    taskEndDate: taskEndDate
+                };
+
+                fetch(`${apiUrl}/${taskId}`, {
+                    method: 'PATCH',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(requestData)
+                })
+                    .then(response => {
+                        if (!response.ok) {
+                            // Handle non-OK responses
+                            return response.text().then(text => {
+                                throw new Error(text || "Failed to update task.");
+                            });
+                        }
+
+                        // Check if the response body is empty
+                        if (response.status === 204 || response.bodyUsed) {
+                            showSuccessPopup("Updated Successfully!");
+                            return;
+                        }
+
+                        // Try parsing the response JSON
+                        return response.json().catch(() => {
+                            throw new Error("Failed to parse JSON response.");
+                        });
+                    })
+                    .then(data => {
+                        if (data) {
+                            const message = data?.Message || "Task updated successfully.";
+                            showSuccessPopup(message);
+                        }
+                    })
+                    .catch(error => {
+                        console.error(error);
+                        alert(`Error: ${error.message}`);
+                    });
+            }
+
+        </script>
+</body>
+</html>
+

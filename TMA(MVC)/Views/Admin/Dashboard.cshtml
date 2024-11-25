@@ -1,0 +1,119 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 1px;
+        }
+
+        body {
+            margin: 0px;
+            background-image: url("https://thumbs.dreamstime.com/b/sky-blue-white-pastel-color-shaded-blur-background-wallpaper-book-page-paintings-printing-mobile-backgrounds-book-covers-149128658.jpg");
+            background-repeat: no-repeat;
+            height: 100vh;
+            background-size: cover;
+            font-family: Arial, sans-serif;
+        }
+
+        .menu {
+            display: grid;
+            grid-template-columns: 200px 200px 200px;
+            justify-content: space-between;
+            padding: 20px 200px 40px 180px;
+            grid-template-areas: inherit;
+            border: none;
+            background: none;
+        }
+
+        .line {
+            margin: 0px 120px;
+            border: 1px solid rgb(206, 206, 206);
+        }
+
+        .card1 {
+            width: 180px;
+            margin: 20px 30px;
+        }
+
+        .tumbnail > img {
+            height: 140px;
+            width: 200px;
+            border-radius: 20px;
+        }
+
+        .card1 > .desc {
+            margin: 0px;
+            line-height: 25px;
+        }
+
+        .desc > h5 {
+            text-align: center;
+            color: darkblue;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <div class="menu">
+
+
+        <div class="card1">
+            <div class="tumbnail">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.Cfx_VpvxWgWxMe14Npzj-wHaHa&pid=Api&P=0&h=180" alt="">
+            </div>
+            <div class="desc">
+                <h5> @Html.ActionLink("Users", "Users", "Admin", new { area = "" })</h5>
+            </div>
+        </div>
+        <div class="card1">
+            <div class="tumbnail">
+                <img src="https://tse3.mm.bing.net/th?id=OIP.sqeIc3FfZUzctFt_lNmBCgHaHa&pid=Api&P=0&h=180" alt="">
+            </div>
+            <div class="desc">
+                <h5> @Html.ActionLink("Projects", "Projects", "Admin", new { area = "" })</h5>
+            </div>
+        </div>
+
+        <div class="card1">
+            <div class="tumbnail">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.bN_M1t9qoiaZ2BrSt0TGQQHaHa&pid=Api&P=0&h=180" alt="">
+            </div>
+            <div class="desc">
+                <h5>@Html.ActionLink("Tasks", "Tasks", "Admin", new { area = "" })</h5>
+            </div>
+        </div>
+        <div class="card1">
+            <div class="tumbnail">
+                <img src="https://tse1.mm.bing.net/th?id=OIP.U1JE0NoMpiQ9ypnF1fvI-QHaGK&pid=Api&P=0&h=180" alt="">
+            </div>
+            <div class="desc">
+                <h5>@Html.ActionLink("ProjectManagement", "ProjectManagement", "Admin", new { area = "" })</h5>
+            </div>
+        </div>
+        <div class="card1">
+            <div class="tumbnail">
+                <img src="https://tse3.mm.bing.net/th?id=OIP.O98sSzdaFvIGGIV7_em1gQAAAA&pid=Api&P=0&h=180" alt="">
+            </div>
+            <div class="desc">
+                <h5>@Html.ActionLink("ProjectReport", "ProjectReport", "Admin", new { area = "" })</h5>
+            </div>
+        </div>
+        <div class="card1">
+            <div class="tumbnail">
+                <img src="https://tse2.mm.bing.net/th?id=OIP.0rAWKbJR8jxy9mOrd6CO7AAAAA&pid=Api&P=0&h=180" alt="">
+            </div>
+            <div class="desc">
+                <h5>@Html.ActionLink("TaskReport", "TaskReport", "Admin", new { area = "" })</h5>
+            </div>
+        </div>
+
+    </div>
+
+
+</body>
+</html>

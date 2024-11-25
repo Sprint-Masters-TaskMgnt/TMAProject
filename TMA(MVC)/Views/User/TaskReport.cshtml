@@ -1,0 +1,237 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Task Report</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            color: navy;
+        }
+
+        form {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+            form label {
+                font-size: 1.2rem;
+            }
+
+            form input {
+                margin-left: 10px;
+                padding: 8px;
+                font-size: 1rem;
+                width: 250px;
+            }
+
+            form button {
+                padding: 10px 20px;
+                font-size: 1rem;
+                background-color: navy;
+                color: white;
+                border: none;
+                border-radius: 5px;
+                cursor: pointer;
+            }
+
+                form button:hover {
+                    background-color: darkblue;
+                }
+
+        .report-container {
+            display: flex;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .user-details,
+        .tasks {
+            background: #ffffff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .user-details {
+            width: 30%;
+        }
+
+        .tasks {
+            flex: 1;
+        }
+
+        .tasks-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .task-box {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 15px;
+            width: calc(50% - 20px); /* Two columns */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+            .task-box strong {
+                display: block;
+                margin-bottom: 5px;
+            }
+
+        #downloadButtonContainer {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        #downloadReportBtn {
+            padding: 10px 20px;
+            font-size: 1rem;
+            background-color: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            #downloadReportBtn:hover {
+                background-color: darkgreen;
+            }
+    </style>
+</head>
+<body>
+    <h1>User Task Report</h1>
+
+    <!-- Input to enter User ID -->
+    <form id="userIdForm">
+        <label for="userId">User ID:</label>
+        <input type="text" id="userId" name="userId" placeholder="Enter User ID" required>
+        <button type="button" onclick="generateReport()">Generate Report</button>
+    </form>
+
+    <!-- Report Container -->
+    <div class="report-container" id="reportContainer">
+        <!-- User Details Section -->
+        <div class="user-details" id="userDetails">
+            <h2>User Details</h2>
+            <p>Enter a User ID to view details</p>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="tasks" id="tasks">
+            <h2>Tasks</h2>
+            <p>No tasks found yet.</p>
+        </div>
+    </div>
+
+    <!-- Download button -->
+    <div id="downloadButtonContainer" style="display: none;">
+        <button id="downloadReportBtn">Download Report</button>
+    </div>
+
+    <script>
+        const tasksApiUrl = 'https://localhost:7071/api/UserTaskReport/TaskTbls'; // Replace with your API endpoint
+        const userApiUrl = 'https://localhost:7071/api/UserTaskReport/Users'; // Replace with your API endpoint
+
+        function generateReport() {
+            const userId = document.getElementById("userId").value.trim();
+
+            if (!userId) {
+                alert("Please enter a valid User ID.");
+                return;
+            }
+
+            // Fetch user details
+            fetch(`${userApiUrl}/${userId}`)
+                .then(response => {
+                    if (!response.ok) throw new Error("User not found.");
+                    return response.json();
+                })
+                .then(user => {
+                    // Fetch tasks associated with the user
+                    fetch(`${tasksApiUrl}/${userId}`)
+                        .then(response => {
+                            if (!response.ok) throw new Error("Tasks not found.");
+                            return response.json();
+                        })
+                        .then(tasks => {
+                            displayReport(user, tasks);
+                        })
+                        .catch(error => alert(error.message));
+                })
+                .catch(error => alert(error.message));
+        }
+
+        function displayReport(user, tasks) {
+            // User Details
+            const userDetailsDiv = document.getElementById("userDetails");
+            userDetailsDiv.innerHTML = `
+                    <h2>User Details</h2>
+                    <p><strong>User ID:</strong> ${user.userId}</p>
+                    <p><strong>Name:</strong> ${user.userName}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                `;
+
+            // Tasks
+            const tasksDiv = document.getElementById("tasks");
+            if (tasks.length === 0) {
+                tasksDiv.innerHTML = "<h2>Tasks</h2><p>No tasks found for this user.</p>";
+            } else {
+                tasksDiv.innerHTML = "<h2>Tasks</h2>";
+                const tasksGrid = document.createElement("div");
+                tasksGrid.className = "tasks-grid";
+
+                tasks.forEach(task => {
+                    const taskBox = document.createElement("div");
+                    taskBox.className = "task-box";
+                    taskBox.innerHTML = `
+                            <strong>Task Name:</strong> ${task.taskName}
+                            <strong>Status:</strong> ${task.status}
+                            <strong>Priority:</strong> ${task.priority}
+                            <strong>Start Date:</strong> ${new Date(task.startDate).toLocaleDateString()}
+                            <strong>End Date:</strong> ${new Date(task.endDate).toLocaleDateString()}
+                        `;
+                    tasksGrid.appendChild(taskBox);
+                });
+
+                tasksDiv.appendChild(tasksGrid);
+            }
+
+            // Show download button
+            const downloadButtonContainer = document.getElementById("downloadButtonContainer");
+            downloadButtonContainer.style.display = "block";
+            document.getElementById("downloadReportBtn").onclick = () => downloadReport(user.userId);
+        }
+
+        function downloadReport(userId) {
+            const downloadUrl = `${tasksApiUrl}/${userId}/downloadReport`;
+
+            fetch(downloadUrl)
+                .then(response => {
+                    if (!response.ok) throw new Error("Failed to download report.");
+                    return response.blob();
+                })
+                .then(blob => {
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement("a");
+                    a.href = url;
+                    a.download = `User_${userId}_Task_Report.csv`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => alert("Error downloading report: " + error.message));
+        }
+    </script>
+</body>
+</html>

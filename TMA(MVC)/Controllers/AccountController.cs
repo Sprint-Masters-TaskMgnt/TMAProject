@@ -9,6 +9,11 @@ using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
 using TMA_MVC_.Models;
+using TMA_MVC_.DTO;
+using Newtonsoft.Json;
+using System.Net.Http;
+using System.Text;
+using System.Net.Mail;
 
 namespace TMA_MVC_.Controllers
 {
@@ -18,8 +23,11 @@ namespace TMA_MVC_.Controllers
         private ApplicationSignInManager _signInManager;
         private ApplicationUserManager _userManager;
 
+        private readonly HttpClient _httpClient;
+
         public AccountController()
         {
+            _httpClient = new HttpClient();
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
@@ -142,27 +150,115 @@ namespace TMA_MVC_.Controllers
             return View();
         }
 
-        //
+        ////
+        //// POST: /Account/Register
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Register(RegisterViewModel model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+        //        var result = await UserManager.CreateAsync(user, model.Password);
+        //        if (result.Succeeded)
+        //        {
+        //            await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
+
+        //            // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+        //            // Send an email with this link
+        //            // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+        //            // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+        //            // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+        //            return RedirectToAction("Index", "Home");
+        //        }
+        //        AddErrors(result);
+        //    }
+
+        //    // If we got this far, something failed, redisplay form
+        //    return View(model);
+        //}
+
+
+
+        //// POST: /Account/Register
+        //[HttpPost]
+        //[AllowAnonymous]
+        //[ValidateAntiForgeryToken]
+        //public async Task<ActionResult> Register(CreateUserDTO model)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
+        //        var result = await UserManager.CreateAsync(user, model.PasswordHash);
+        //        if (result.Succeeded)
+        //        {
+        //            await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
+        //            // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
+        //            // Send an email with this link
+        //            // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
+        //            // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
+        //            // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
+
+        //            var json=JsonConvert.SerializeObject(model);
+        //            var content=new StringContent(json, Encoding.UTF8, "application/json");
+        //            HttpResponseMessage response=await _httpClient.PostAsync("https://localhost:7071/api/Users", content);
+
+        //            if (response.IsSuccessStatusCode)
+        //            {
+        //                TempData["Message"] = "Registration successfull";
+        //                return RedirectToAction("Login","Account");
+        //            }
+
+        //            return RedirectToAction("Index", "Home");
+        //        }
+        //        AddErrors(result);
+        //    }
+        //    // If we got this far, something failed, redisplay form
+        //    return View(model);
+        //}
+
+
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
         [ValidateAntiForgeryToken]
-        public async Task<ActionResult> Register(RegisterViewModel model)
+        public async Task<ActionResult> Register(CreateUserDTO model)
         {
             if (ModelState.IsValid)
             {
                 var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
-                var result = await UserManager.CreateAsync(user, model.Password);
+                var result = await UserManager.CreateAsync(user, model.PasswordHash);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent:false, rememberBrowser:false);
-                    
+                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+
                     // For more information on how to enable account confirmation and password reset please visit https://go.microsoft.com/fwlink/?LinkID=320771
                     // Send an email with this link
                     // string code = await UserManager.GenerateEmailConfirmationTokenAsync(user.Id);
                     // var callbackUrl = Url.Action("ConfirmEmail", "Account", new { userId = user.Id, code = code }, protocol: Request.Url.Scheme);
                     // await UserManager.SendEmailAsync(user.Id, "Confirm your account", "Please confirm your account by clicking <a href=\"" + callbackUrl + "\">here</a>");
 
+                    var json = JsonConvert.SerializeObject(model);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    HttpResponseMessage response = await _httpClient.PostAsync("https://localhost:7071/api/Users", content);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        TempData["Message"] = "Registration successfull";
+                        return RedirectToAction("Login", "Account");
+                    }
+                    var subject = "Welcome to our site!";
+                    var body = $"Hello {user.UserName},\n\nThank you for registering with us. We are glad to have you on board.";
+
+                    var emailResult = await SendEmailAsync(user.Email, subject, body);
+                    if (emailResult)
+                    {
+                        // Optionally, add a success message or log the email status
+                        ViewBag.Message = "Registration successful. A confirmation email has been sent.";
+                    }
                     return RedirectToAction("Index", "Home");
                 }
                 AddErrors(result);
@@ -171,6 +267,34 @@ namespace TMA_MVC_.Controllers
             // If we got this far, something failed, redisplay form
             return View(model);
         }
+
+        // Helper method to send email
+        private async Task<bool> SendEmailAsync(string toEmail, string subject, string body)
+        {
+            try
+            {
+                var message = new MailMessage();
+                message.To.Add(new MailAddress(toEmail));
+                message.Subject = subject;
+                message.Body = body;
+                message.IsBodyHtml = false; // Set to true if you want to send HTML emails
+
+                using (var smtpClient = new SmtpClient())
+                {
+                    await smtpClient.SendMailAsync(message);
+                }
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                // Log the exception (e.g., to a file or logging system)
+                Console.WriteLine($"Error sending email: {ex.Message}");
+                return false;
+            }
+        }
+
+
 
         //
         // GET: /Account/ConfirmEmail
@@ -392,7 +516,7 @@ namespace TMA_MVC_.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //
