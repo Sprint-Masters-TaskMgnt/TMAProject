@@ -677,5 +677,31 @@ namespace TMAWebAPI.Controllers
 
             return Ok(tasks);
         }
+        // GET: api/TaskTbls/overdueTasks
+        [HttpGet("overdueTasks")]
+        public async Task<IActionResult> GetOverdueTasks()
+        {
+            var today = DateTime.Now.Date; // Current date without time
+
+            var overdueTasks = await _context.TaskTbls
+                .Where(t => t.TaskEndDate < today && t.Status != "Completed") // Check overdue condition
+                .Select(t => new
+                {
+                    t.TaskId,
+                    t.TaskName,
+                    t.Status,
+                    t.Priority,
+                    TaskEndDate = t.TaskEndDate,
+                    DaysExceeded = EF.Functions.DateDiffDay(t.TaskEndDate, today) // Calculate days exceeded
+                })
+                .ToListAsync();
+
+            if (!overdueTasks.Any())
+            {
+                return NotFound(new { Message = "No overdue tasks found." });
+            }
+
+            return Ok(overdueTasks);
+        }
     }
 }

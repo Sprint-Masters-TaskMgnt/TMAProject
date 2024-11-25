@@ -99,6 +99,73 @@ namespace TMAWebAPI.Controllers
 
             return File(reportBytes, "text/csv", fileName);
         }
+        [HttpGet("UserProductivityReport/{userId}")]
+        public async Task<IActionResult> DownloadUserProductivityReport(int userId)
+        {
+            // Fetch user details
+            var user = await _context.Users
+                .Where(u => u.Id == userId)
+                .Select(u => new
+                {
+                    UserId = u.Id,
+                    UserName = u.UserName,
+                    Email = u.Email
+                })
+                .FirstOrDefaultAsync();
+
+            if (user == null)
+            {
+                return NotFound(new { Message = $"User with ID {userId} not found." });
+            }
+
+            // Fetch tasks for the user
+            var tasks = await _context.TaskTbls
+                .Where(t => t.AssignedToUserId == userId)
+                .Select(t => new
+                {
+                    TaskName = t.TaskName,
+                    Status = t.Status
+                })
+                .ToListAsync();
+
+            if (tasks == null || tasks.Count == 0)
+            {
+                return NotFound(new { Message = "No tasks found for this user." });
+            }
+
+            // Calculate productivity
+            int totalTasks = tasks.Count;
+            int completedTasks = tasks.Count(t => t.Status == "Completed");
+            int inProgressTasks = tasks.Count(t => t.Status == "In Progress");
+            int notstarted = tasks.Count(t => t.Status == "Not Started");
+
+            double productivity = (completedTasks * 100) + (inProgressTasks * 50);
+            double productivityPercentage = totalTasks > 0 ? productivity / totalTasks : 0;
+
+            // Generate txt content
+            var tContent = new StringBuilder();
+            tContent.AppendLine("User Productivity Report");
+            tContent.AppendLine($"User Name: {user.UserName}");
+            tContent.AppendLine($"Email: {user.Email}");
+            tContent.AppendLine($"Total Tasks: {totalTasks}");
+            tContent.AppendLine($"Completed Tasks: {completedTasks}");
+            tContent.AppendLine($"In Progress Tasks: {inProgressTasks}");
+            tContent.AppendLine($"In Progress Tasks: {notstarted}");
+            tContent.AppendLine($"Productivity Percentage: {productivityPercentage:F2}%");
+            tContent.AppendLine();
+            tContent.AppendLine("Task Name,Status");
+
+            foreach (var task in tasks)
+            {
+                tContent.AppendLine($"{task.TaskName},{task.Status}");
+            }
+
+            // Convert tcontent to bytes and return as file
+            var tBytes = Encoding.UTF8.GetBytes(tContent.ToString());
+            var fileName = $"User_{userId}_Productivity_Report.txt";
+
+            return File(tBytes, "text/txt", fileName);
+        }
     }
 
 }
