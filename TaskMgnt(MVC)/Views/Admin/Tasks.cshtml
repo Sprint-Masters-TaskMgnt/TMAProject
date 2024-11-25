@@ -1,11 +1,220 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management - TaskTbl</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 10px;
+        }
 
-namespace TaskMgnt_MVC_.Views.Admin
-{
-	public class Tasks
-	{
-	}
-}
+        h1, h2 {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 1.5em;
+        }
+
+        #taskForm {
+            background-color: #fff;
+            padding: 15px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 300px;
+            margin: 0 auto;
+            font-size: 0.9em;
+        }
+
+        input[type="text"], input[type="number"], input[type="date"] {
+            width: 100%;
+            padding: 6px;
+            margin: 8px 0;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            font-size: 0.9em;
+        }
+
+        button {
+            padding: 8px;
+            width: 100%;
+            background-color: #3498db;
+            border: none;
+            color: white;
+            font-size: 0.9em;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+            button:hover {
+                background-color: #2980b9;
+            }
+
+        #taskList table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            font-size: 0.85em;
+        }
+
+        #taskList th, #taskList td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        #taskList th {
+            background-color: #2980b9;
+            color: white;
+        }
+
+        #responseMessage {
+            text-align: center;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+</head>
+<body>
+    <h1>Task Management - TaskTbl</h1>
+
+    <div id="taskForm">
+        <h2>Add/Update Task</h2>
+        <label for="taskId">Task ID:</label>
+        <input type="number" id="taskId" name="taskId">
+
+        <label for="taskName">Task Name:</label>
+        <input type="text" id="taskName" name="taskName" required>
+
+        <label for="description">Description:</label>
+        <input type="text" id="description" name="description" required>
+
+        <label for="status">Status:</label>
+        <input type="text" id="status" name="status" required>
+
+        <label for="taskEndDate">End Date:</label>
+        <input type="date" id="taskEndDate" name="taskEndDate" required>
+
+        <label for="priority">Priority:</label>
+        <input type="number" id="priority" name="priority" required>
+
+        <label for="assignedToUserId">Assigned User ID:</label>
+        <input type="number" id="assignedToUserId" name="assignedToUserId" required>
+
+        <label for="projectId">Project ID:</label>
+        <input type="number" id="projectId" name="projectId" required>
+
+        <button type="button" onclick="createTask()">Create Task</button>
+        <button type="button" onclick="updateTask()">Update Task</button>
+        <button type="button" onclick="deleteTask()">Delete Task</button>
+    </div>
+
+    <h2>Task List</h2>
+    <button type="button" onclick="fetchTasks()">Get All Tasks</button>
+    <div id="taskList"></div>
+
+    <div id="responseMessage"></div>
+
+    <script>
+        const apiUrl = 'https://localhost:7071/api/TaskTbls';
+
+        function displayMessage(message, isError = false) {
+            const messageDiv = document.getElementById("responseMessage");
+            messageDiv.style.color = isError ? "red" : "green";
+            messageDiv.innerText = message;
+        }
+
+        function fetchTasks() {
+            $.ajax({
+                url: apiUrl,
+                method: 'GET',
+                success: function(tasks) {
+                    let taskTable = '<table><tr><th>ID</th><th>Name</th><th>Description</th><th>Status</th><th>End Date</th><th>Priority</th><th>User ID</th><th>Project ID</th></tr>';
+                    tasks.forEach(task => {
+                        taskTable += `<tr>
+                            <td>${task.taskId}</td>
+                            <td>${task.taskName}</td>
+                            <td>${task.description}</td>
+                            <td>${task.status}</td>
+                            <td>${task.taskEndDate}</td>
+                            <td>${task.priority}</td>
+                            <td>${task.assignedToUserId}</td>
+                            <td>${task.projectId}</td>
+                        </tr>`;
+                    });
+                    taskTable += '</table>';
+                    document.getElementById("taskList").innerHTML = taskTable;
+                },
+                error: function() {
+                    displayMessage("Failed to retrieve tasks.", true);
+                }
+            });
+        }
+
+        function createTask() {
+            const taskData = getTaskData();
+            $.ajax({
+                url: apiUrl,
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(taskData),
+                success: function() {
+                    displayMessage("Task created successfully.");
+                    fetchTasks();
+                },
+                error: function() {
+                    displayMessage("Failed to create task.", true);
+                }
+            });
+        }
+
+        function updateTask() {
+            const taskData = getTaskData();
+            $.ajax({
+                url: `${apiUrl}/${taskData.taskId}`,
+                method: 'PUT',
+                contentType: 'application/json',
+                data: JSON.stringify(taskData),
+                success: function() {
+                    displayMessage("Task updated successfully.");
+                    fetchTasks();
+                },
+                error: function() {
+                    displayMessage("Failed to update task.", true);
+                }
+            });
+        }
+
+        function deleteTask() {
+            const taskId = document.getElementById("taskId").value;
+            $.ajax({
+                url: `${apiUrl}/${taskId}`,
+                method: 'DELETE',
+                success: function() {
+                    displayMessage("Task deleted successfully.");
+                    fetchTasks();
+                },
+                error: function() {
+                    displayMessage("Failed to delete task.", true);
+                }
+            });
+        }
+
+        function getTaskData() {
+            return {
+                taskId: parseInt(document.getElementById("taskId").value),
+                taskName: document.getElementById("taskName").value,
+                description: document.getElementById("description").value,
+                status: document.getElementById("status").value,
+                taskEndDate: document.getElementById("taskEndDate").value,
+                priority: parseInt(document.getElementById("priority").value),
+                assignedToUserId: parseInt(document.getElementById("assignedToUserId").value),
+                projectId: parseInt(document.getElementById("projectId").value)
+            };
+        }
+    </script>
+</body>
+</html>
