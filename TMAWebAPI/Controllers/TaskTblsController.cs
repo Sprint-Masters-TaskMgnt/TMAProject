@@ -84,16 +84,62 @@ namespace TaskManagementAPI.Controllers
             return NoContent();
         }
 
-        // POST: api/TaskTbls
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=212375
+        //// POST: api/TaskTbls
+        //// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=212375
+        //[HttpPost]
+        //public async Task<ActionResult<TaskTbl>> PostTaskTbl(TaskTblDTO taskDTO)
+        //{
+        //    // Create a new TaskTbl entity from the DTO
+        //    TaskTbl taskTbl = new TaskTbl
+        //    {
+        //        TaskName = taskDTO.TaskName,
+        //        AssignedToUserId = taskDTO.AssignedToUserId,  // AssignedToUserId is an int
+        //        ProjectId = taskDTO.ProjectId,
+        //        Priority = taskDTO.Priority,
+        //        Status = taskDTO.Status,
+        //        TaskStartDate = taskDTO.TaskStartDate,
+        //        TaskEndDate = taskDTO.TaskEndDate,
+        //        Description = taskDTO.Description
+        //    };
+
+        //    // Add the new task to the context
+        //    _context.TaskTbls.Add(taskTbl);
+
+        //    try
+        //    {
+        //        // Save the changes to the database
+        //        await _context.SaveChangesAsync();
+        //    }
+        //    catch (DbUpdateException)
+        //    {
+        //        // Handle conflict if the TaskId already exists
+        //        if (TaskTblExists(taskTbl.TaskId))
+        //        {
+        //            return Conflict();
+        //        }
+        //        else
+        //        {
+        //            throw;  // Re-throw if it's a different exception
+        //        }
+        //    }
+
+        //    // Return the newly created TaskTbl, with a 201 status code and the created resource's URL
+        //    return CreatedAtAction("GetTaskTbl", new { id = taskTbl.TaskId }, taskTbl);
+        //}
+
         [HttpPost]
         public async Task<ActionResult<TaskTbl>> PostTaskTbl(TaskTblDTO taskDTO)
         {
-            // Create a new TaskTbl entity from the DTO
+            if (TaskTblExists(taskDTO.TaskId))
+            {
+                return Conflict(new { Message = $"Task with ID {taskDTO.TaskId} already exists." });
+            }
+
             TaskTbl taskTbl = new TaskTbl
             {
+                TaskId = taskDTO.TaskId, // Ensure this ID doesn't conflict
                 TaskName = taskDTO.TaskName,
-                AssignedToUserId = taskDTO.AssignedToUserId,  // AssignedToUserId is an int
+                AssignedToUserId = taskDTO.AssignedToUserId,
                 ProjectId = taskDTO.ProjectId,
                 Priority = taskDTO.Priority,
                 Status = taskDTO.Status,
@@ -102,30 +148,12 @@ namespace TaskManagementAPI.Controllers
                 Description = taskDTO.Description
             };
 
-            // Add the new task to the context
             _context.TaskTbls.Add(taskTbl);
+            await _context.SaveChangesAsync();
 
-            try
-            {
-                // Save the changes to the database
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateException)
-            {
-                // Handle conflict if the TaskId already exists
-                if (TaskTblExists(taskTbl.TaskId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;  // Re-throw if it's a different exception
-                }
-            }
-
-            // Return the newly created TaskTbl, with a 201 status code and the created resource's URL
-            return CreatedAtAction("GetTaskTbl", new { id = taskTbl.TaskId }, taskTbl);
+            return CreatedAtAction(nameof(GetTaskTbl), new { id = taskTbl.TaskId }, taskTbl);
         }
+
 
 
         // DELETE: api/TaskTbls/5
@@ -337,4 +365,3 @@ namespace TaskManagementAPI.Controllers
 
     }
 }
-

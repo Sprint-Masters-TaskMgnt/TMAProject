@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿﻿﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -80,11 +81,20 @@
             display: none;
             z-index: 999;
         }
+
+        #updateProfileForm > img {
+            position: absolute;
+            margin-left: 400px;
+            margin-top: 45px;
+        }
     </style>
 </head>
 <body>
     <h1>Update Profile</h1>
     <form id="updateProfileForm">
+
+        <img src="https://cdni.iconscout.com/illustration/premium/thumb/update-your-profile-1946860-1648379.png" style="width: 650px; height: 500px;">
+
         <label for="id">User ID:</label>
         <input type="number" id="id" placeholder="Enter User ID" required onblur="fetchUserData()" />
 
@@ -137,7 +147,7 @@
             const id = document.getElementById("id").value.trim();
             if (!id) return;
 
-            fetch(${ apiUrl } / ${ id })
+            fetch(`${apiUrl}/${id}`)
                 .then(response => {
                     if (!response.ok) {
                         throw new Error("User not found.");
@@ -151,7 +161,7 @@
                     document.getElementById("phoneNumber").value = data.phoneNumber || "";
                 })
                 .catch(error => {
-                    showPopup(Error: ${ error.message });
+                    showPopup(`Error: ${error.message}`);
                 });
         }
 
@@ -176,7 +186,7 @@
                 roleId: parseInt(roleId, 10) // Ensure RoleId is an integer
             };
 
-            fetch(${ apiUrl } / ${ id }, {
+            fetch(`${apiUrl}/${id}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -198,7 +208,7 @@
                     showPopup(message);
                 })
                 .catch(error => {
-                    showPopup(Error: ${ error.message });
+                    showPopup(`Error: ${error.message}`);
                 });
         }
     </script>

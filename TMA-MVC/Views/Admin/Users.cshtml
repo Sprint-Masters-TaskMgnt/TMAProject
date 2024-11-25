@@ -4,316 +4,294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User - CRUD Operations</title>
+    <title>User Management</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-direction: column;
-            margin: 0;
+            background-color: #f4f4f9;
             padding: 20px;
-            background-color: #f5f5f5;
-            background-image: url('https://www.wimi-teamwork.com/static/medias/logiciels-gestion-des-taches-1280x640-1.png');
-            background-size: auto;
-            background-repeat: no-repeat;
         }
 
-        h1, h2 {
-            color: #333;
+        h2 {
+            color: navy;
         }
 
-        form {
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            max-width: 400px;
-            width: 100%;
-        }
-
-        label {
-            display: block;
-            margin-top: 10px;
-            font-weight: bold;
-        }
-
-        input[type="number"],
-        input[type="password"],
-        input[type="email"],
-        input[type="text"] {
-            width: 100%;
-            padding: 8px;
-            margin-top: 5px;
-            margin-bottom: 15px;
+        .user-form, .create-user-form {
+            margin-bottom: 20px;
+            padding: 15px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 5px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
-        button {
-            padding: 10px 15px;
-            margin: 5px 0;
-            background-color: #007bff;
-            color: #fff;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
-            width: 100%;
-        }
-
-            button:hover {
-                background-color: #0056b3;
+            .user-form input, .create-user-form input, .user-form button, .create-user-form button {
+                margin: 5px;
+                padding: 8px;
+                font-size: 1rem;
             }
 
-        #responseMessage {
-            display: block;
-            margin-top: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-
-        #usersList {
-            max-width: 400px;
+        .user-details {
             margin-top: 20px;
             padding: 15px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #ffffff;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .notification {
+            display: none;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            color: #fff;
+            background-color: #28a745;
+            font-size: 1rem;
+            position: fixed;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 1000;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .user-list {
+            margin-top: 20px;
+        }
+
+        table {
             width: 100%;
+            border-collapse: collapse;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #f2f2f2;
         }
     </style>
 </head>
-
 <body>
-    <h1>User Management - CRUD Operations</h1>
 
-    <!-- Add User Form -->
-    <h2>Add or Update User</h2>
-    <form id="userForm">
-        <label for="id">ID:</label>
-        <input type="text" id="id" name="id" required>
+    <h2>User Management</h2>
 
-        <label for="userName">UserName:</label>
-        <input type="text" id="userName" name="serName" required>
+    <!-- Form to get user details -->
+    <div class="user-form">
+        <input type="number" id="userIdInput" placeholder="Enter User ID">
+        <button onclick="getUserDetails()">Get User</button>
+        <button onclick="getAllUsers()">Get All Users</button>
+    </div>
 
-        <label for="phoneNumber">PhoneNumber:</label>
-        <input type="text" id="phoneNumber" name="phoneNumber" required>
+    <!-- Form to create a new user -->
+    <div class="create-user-form">
+        <h2>Create New User</h2>
+        <input type="text" id="userName" placeholder="Enter Username">
+        <input type="email" id="userEmail" placeholder="Enter Email">
+        <input type="text" id="userPhone" placeholder="Enter Phone Number">
+        <input type="password" id="userPassword" placeholder="Enter Password">
+        <input type="number" id="userRoleId" placeholder="Enter Role ID">
+        <button onclick="createUser()">Create User</button>
+    </div>
 
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
+    <!-- Notification message -->
+    <div class="notification" id="notification"></div>
 
-        <label for="passwordHash">Password:</label>
-        <input type="password" id="passwordHash" name="passwordHash" required>
+    <!-- User details display area -->
+    <div class="user-details" id="userDetails">
+        <p>No user data available. Enter a User ID to fetch details.</p>
+    </div>
 
-        <label for="userRole">UserRole:</label>
-        <input type="text" id="userRole" name="userRole" required>
-
-        <button type="button" onclick="addUser()">Add User (POST)</button>
-        <button type="button" onclick="updateUser()">Update User (PUT)</button>
-    </form>
-
-    <!-- DELETE User Form -->
-    <h2>DELETE User by ID</h2>
-    <form id="deleteUserForm">
-        <label for="deleteUserId">User ID:</label>
-        <input type="number" id="deleteUserId" name="deleteUserId" required><br><br>
-        <button type="button" onclick="deleteUser()">Delete User</button>
-    </form>
-
-    <label id="responseMessage"></label>
-
-    <!-- View All Users -->
-    <h2>View All Users</h2>
-    <button type="button" id="toggleUsersButton" onclick="fetchAllUsers()">Get All Users</button>
-    <div id="usersList"></div>
-
-    <!-- View User by Id -->
-    <h2>GET User by ID</h2>
-    <form id="getUserForm">
-        <label for="getUserId">User ID:</label>
-        <input type="number" id="getUserId" name="id" required><br><br>
-        <button type="button" onclick="getUser()">GET User</button>
-    </form>
-    <pre id="getResult"></pre>
+    <!-- List of all users in table format -->
+    <div class="user-list" id="userList">
+        <p>No users fetched yet.</p>
+    </div>
 
     <script>
-        const userApiUrl = 'https://localhost:7071/api/Users';
-        let isUserListVisible = false;
+        const userApiUrl = 'https://localhost:7071/api/Users'; // Replace with your API base URL
 
-        // Function to display messages
-        function displayMessage(message, isError = false) {
-            const responseLabel = document.getElementById("responseMessage");
-            responseLabel.style.color = isError ? "red" : "green";
-            responseLabel.textContent = message;
-        }
+        // Function to get details for a specific user
+        function getUserDetails() {
+            const userId = document.getElementById("userIdInput").value.trim();
 
-        // Function to add a new User (POST)
-        function addUser() {
-            const id = document.getElementById("id").value;
-            const userName = document.getElementById("userName").value;
-            const phoneNumber = document.getElementById("phoneNumber").value;
-            const email = document.getElementById("email").value;
-            const passwordHash = document.getElementById("passwordHash").value;
-            const userRole = document.getElementById("userRole").value;
-
-            // Validate fields before making the request
-            if (!id || !userName || !phoneNumber || !email || !passwordHash || !userRole) {
-                displayMessage("All fields are required!", true);
+            if (!userId) {
+                alert("Please enter a valid User ID.");
                 return;
             }
-
-            const data = {
-                id: id,
-                userName: userName,
-                phoneNumber: phoneNumber,
-                email: email,
-                passwordHash: passwordHash,
-                userRole: userRole
-            };
-
-
-            fetch(userApiUrl, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-                .then(response => response.json())
-                .then(data => {
-                    displayMessage("User added successfully!");
-                    displaySingleUsers([data]);
-                });
-        }
-
-        // Function to update a User (PUT)
-        function updateUser() {
-            const id = document.getElementById("id").value;
-            const userName = document.getElementById("userName").value;
-            const phoneNumber = document.getElementById("phoneNumber").value;
-            const email = document.getElementById("email").value;
-            const passwordHash = document.getElementById("passwordHash").value;
-            const userRole = document.getElementById("userRole").value;
-
-            // Validate fields before making the request
-            if (!id || !userName || !phoneNumber || !email || !passwordHash || !userRole) {
-                displayMessage("All fields are required!", true);
-                return;
-            }
-
-            const data = {
-                id: id,
-                userName: userName,
-                phoneNumber: phoneNumber,
-                email: email,
-                passwordHash: passwordHash,
-                userRole: userRole
-            };
-
-            // Send the PUT request
-            fetch(`${userApiUrl}/${id}`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            })
-                .then(response => {
-                    if (response.status === 204) {
-                        displayMessage("User updated successfully!");
-                        return null;
-                    }
-
-                    if (!response.ok) {
-                        throw new Error(`Request failed with status ${response.status}`);
-                    }
-
-                    return response.json();
-                })
-                .then(data => {
-                    if (data) {
-                        displaySingleUsers([data]);
-                    }
-                    displayMessage("User updated successfully!");
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    displayMessage(`Error: ${error.message}`, true);
-                });
-        }
-
-        // Function to delete a User (DELETE)
-        function deleteUser() {
-            const id = document.getElementById("deleteUserId").value;
-
-            if (!id) {
-                displayMessage("Please enter a User ID to delete", true);
-                return;
-            }
-
-            fetch(`${userApiUrl}/${id}`, { method: 'DELETE' })
-                .then(response => {
-                    if (response.status === 204) {
-                        displayMessage(`User ID ${id} deleted`);
-                        fetchAllUsers();
-                    }
-                });
-        }
-
-        // Function to fetch all Users (GET)
-        function fetchAllUsers() {
-            const usersList = document.getElementById("usersList");
-            const button = document.getElementById("toggleUsersButton");
-
-            if (isUserListVisible) {
-                usersList.innerHTML = "";
-                button.textContent = "Get All Users";
-            } else {
-                fetch(userApiUrl)
-                    .then(response => response.json())
-                    .then(data => displayUsers(data));
-                button.textContent = "Hide Users";
-            }
-
-            isUserListVisible = !isUserListVisible; // Toggle visibility
-        }
-
-        // Function to fetch User by ID (GET)
-        function getUser() {
-            const id = document.getElementById("getUserId").value;
 
             fetch(`${userApiUrl}/${userId}`)
-                .then(response => response.json())
-                .then(user => {
-                    const result = `
-                                       ID: ${user.id}, Name: ${user.userName}, PhoneNumber: ${user.phoneNumber}, Email: ${user.email}, Password: ${user.password}, UserRole: ${user.userRole}
-                                        `;
-                    document.getElementById("getResult").textContent = result;
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("User not found.");
+                    }
+                    return response.json();
                 })
-                .catch(error => console.error('Error:', error));
+                .then(user => {
+                    displayUserDetails(user);
+                    showNotification("User data fetched successfully!", true);
+                })
+                .catch(error => {
+                    showNotification("User not found.", false);
+                });
         }
 
-        // Function to display a single User
-        function displaySingleUsers(users) {
-            const usersList = document.getElementById("usersList");
-            usersList.innerHTML = "<h3>User:</h3>";
-            usersList.innerHTML += users.map(user => `
-                                                         <p> ID: ${user.id}, Name: ${user.userName}, PhoneNumber: ${user.phoneNumber}, Email: ${user.email}, Password: ${user.password}, UserRole: ${user.userRole}</p>
-                                                    `).join('');
+        // Function to display user details
+        function displayUserDetails(user) {
+            const userDetailsDiv = document.getElementById("userDetails");
+            userDetailsDiv.innerHTML = `
+                    <p><strong>User ID:</strong> ${user.id}</p>
+                    <p><strong>Username:</strong> ${user.userName}</p>
+                    <p><strong>Email:</strong> ${user.email}</p>
+                    <p><strong>Phone:</strong> ${user.phoneNumber || ''}</p>
+                    <p><strong>Role ID:</strong> ${user.roleId || ''}</p>
+                    <button onclick="deleteUser(${user.id})">Delete User</button>
+                `;
         }
 
-        // Function to display all Users
-        function displayUsers(users) {
-            const usersList = document.getElementById("usersList");
-            usersList.innerHTML = "<h3>All Users:</h3>";
-            usersList.innerHTML += users.map(user => `
-                                                         <p> ID: ${user.id}, Name: ${user.userName}, PhoneNumber: ${user.phoneNumber}, Email: ${user.email}, Password: ${user.password}, UserRole: ${user.userRole}</p>
-                                                    `).join('');
+        // Function to get all users
+        function getAllUsers() {
+            fetch(userApiUrl)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to fetch users.");
+                    }
+                    return response.json();
+                })
+                .then(users => {
+                    displayUserTable(users);
+                    showNotification("All users fetched successfully!", true);
+                })
+                .catch(error => {
+                    showNotification("Error fetching users.", false);
+                });
+        }
+
+        // Function to display all users in a table
+        function displayUserTable(users) {
+            const userListDiv = document.getElementById("userList");
+
+            if (users.length === 0) {
+                userListDiv.innerHTML = "<p>No users found.</p>";
+                return;
+            }
+
+            // Create the table header
+            let userTableHtml = `
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>User ID</th>
+                                <th>Username</th>
+                                <th>Email</th>
+                                <th>Phone Number</th>
+                                <th>Role ID</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+
+            // Populate the table with user data
+            users.forEach(user => {
+                userTableHtml += `
+                        <tr>
+                            <td>${user.id}</td>
+                            <td>${user.userName}</td>
+                            <td>${user.email}</td>
+                            <td>${user.phoneNumber || ''}</td>
+                            <td>${user.roleId || ''}</td>
+                            <td>
+                                <button onclick="deleteUser(${user.id})">Delete</button>
+                            </td>
+                        </tr>
+                    `;
+            });
+
+            userTableHtml += `
+                        </tbody>
+                    </table>
+                `;
+
+            userListDiv.innerHTML = userTableHtml;
+        }
+
+        // Function to create a new user
+        function createUser() {
+            const userName = document.getElementById("userName").value.trim();
+            const userEmail = document.getElementById("userEmail").value.trim();
+            const userPhone = document.getElementById("userPhone").value.trim();
+            const userPassword = document.getElementById("userPassword").value.trim();
+            const userRoleId = parseInt(document.getElementById("userRoleId").value.trim());
+
+            if (!userName || !userEmail || !userPassword || isNaN(userRoleId)) {
+                alert("Please fill in all required fields.");
+                return;
+            }
+
+            const newUser = {
+                userName,
+                email: userEmail,
+                phoneNumber: userPhone,
+                passwordHash: userPassword,
+                roleId: userRoleId
+            };
+
+            fetch(userApiUrl, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(newUser)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to create user.");
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    showNotification("User created successfully!", true);
+                    displayUserDetails(user); // Show the created user details
+                })
+                .catch(error => {
+                    showNotification("Error creating user.", false);
+                });
+        }
+
+        // Function to show a notification message
+        function showNotification(message, isSuccess) {
+            const notification = document.getElementById("notification");
+            notification.style.display = "block";
+            notification.style.backgroundColor = isSuccess ? "#28a745" : "#dc3545";
+            notification.textContent = message;
+
+            setTimeout(() => {
+                notification.style.display = "none";
+            }, 3000);
+        }
+
+        // Function to delete a user
+        function deleteUser(userId) {
+            if (!confirm("Are you sure you want to delete this user?")) return;
+
+            fetch(`${userApiUrl}/${userId}`, { method: "DELETE" })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to delete user.");
+                    }
+                    showNotification("User deleted successfully!", true);
+                    document.getElementById("userDetails").innerHTML = "<p>No user data available.</p>";
+                    getAllUsers(); // Refresh user list after deletion
+                })
+                .catch(error => {
+                    showNotification("Error deleting user.", false);
+                });
         }
     </script>
+
 </body>
 </html>
-
-@*<img src="https://www.pngkit.com/png/full/356-3561350_illustration-wallboard-vs-dashboard-project-manager-emoji.png" id="img" style="width: 324px; height: 362px;">*@
-@*<img src="https://img.freepik.com/premium-vector/3d-minimal-social-media-with-emoji-hashtag-speech-mobile-hand-holding-interface-optimization-banner-website-mockup-mobile-phone-concept-3d-social-network-vector-render-illustration_412828-1062.jpg?w=900" id="img" style="width: 324px; height: 216px;">*@
-@*<img src="https://mayeit.taskaid.eu/img/task-logo.png" id="img" style="width: 324px; height: 324px;">*@
-@*<img src="https://onlinecbt.stbalia-yk.ac.id/wp-content/uploads/2022/12/bg-register.png" id="img" style="width: 324px; height: 244px;">*@
-@*<img src="https://www.allen.ac.in/ace2324/assets/images/register.png" id="img" style="width: 324px; height: 324px;">*@

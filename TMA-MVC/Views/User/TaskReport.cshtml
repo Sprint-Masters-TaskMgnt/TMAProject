@@ -1,4 +1,4 @@
-﻿UserTask Report.............
+﻿﻿UserTask Report.............
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -142,7 +142,7 @@
     </div>
 
     <script>
-        const tasksApiUrl = 'https://localhost:7071/api/UserTaskReport/TaskTbls'; // Replace with your API endpoint
+    const tasksApiUrl = 'https://localhost:7071/api/UserTaskReport/TaskTbls'; // Replace with your API endpoint
         const userApiUrl = 'https://localhost:7071/api/UserTaskReport/Users'; // Replace with your API endpoint
 
         function generateReport() {
@@ -232,92 +232,6 @@
                     window.URL.revokeObjectURL(url);
                 })
                 .catch(error => alert("Error downloading report: " + error.message));
-
-            function generateReport() {
-                const userId = document.getElementById("userId").value.trim();
-
-                if (!userId) {
-                    alert("Please enter a valid User ID.");
-                    return;
-                }
-
-                // Fetch user and tasks details including productivity data
-                fetch(`https://localhost:7071/api/UserTaskReport/${userId}`)
-                    .then(response => {
-                        if (!response.ok) throw new Error("User or tasks not found.");
-                        return response.json();
-                    })
-                    .then(data => {
-                        displayReport(data.User, data.Tasks, data);
-                    })
-                    .catch(error => alert(error.message));
-            }
-
-            function displayReport(user, tasks, data) {
-                // User Details
-                const userDetailsDiv = document.getElementById("userDetails");
-                userDetailsDiv.innerHTML = `
-        <h2>User Details</h2>
-        <p><strong>User ID:</strong> ${user.userId}</p>
-        <p><strong>Name:</strong> ${user.userName}</p>
-        <p><strong>Email:</strong> ${user.email}</p>
-        <p><strong>Productivity:</strong> ${data.ProductivityPercentage.toFixed(2)}%</p>
-        <p><strong>Total Tasks:</strong> ${data.TotalTasks}</p>
-        <p><strong>Completed Tasks:</strong> ${data.CompletedTasks}</p>
-        <p><strong>In Progress Tasks:</strong> ${data.InProgressTasks}</p>
-        <p><strong>Not Started Tasks:</strong> ${data.NotStartedTasks}</p>
-    `;
-
-                // Tasks Section
-                const tasksDiv = document.getElementById("tasks");
-                if (tasks.length === 0) {
-                    tasksDiv.innerHTML = "<h2>Tasks</h2><p>No tasks found for this user.</p>";
-                } else {
-                    tasksDiv.innerHTML = "<h2>Tasks</h2>";
-                    const tasksGrid = document.createElement("div");
-                    tasksGrid.className = "tasks-grid";
-
-                    tasks.forEach(task => {
-                        const taskBox = document.createElement("div");
-                        taskBox.className = "task-box";
-                        taskBox.innerHTML = `
-                <strong>Task Name:</strong> ${task.taskName}
-                <strong>Status:</strong> ${task.status}
-                <strong>Priority:</strong> ${task.priority}
-                <strong>Start Date:</strong> ${new Date(task.startDate).toLocaleDateString()}
-                <strong>End Date:</strong> ${new Date(task.endDate).toLocaleDateString()}
-            `;
-                        tasksGrid.appendChild(taskBox);
-                    });
-
-                    tasksDiv.appendChild(tasksGrid);
-                }
-
-                // Show download button
-                const downloadButtonContainer = document.getElementById("downloadButtonContainer");
-                downloadButtonContainer.style.display = "block";
-                document.getElementById("downloadReportBtn").onclick = () => downloadReport(user.userId);
-            }
-
-            function downloadReport(userId) {
-                const downloadUrl = `https://localhost:7071/api/UserTaskReport/${userId}/downloadReport`;
-
-                fetch(downloadUrl)
-                    .then(response => {
-                        if (!response.ok) throw new Error("Failed to download report.");
-                        return response.blob();
-                    })
-                    .then(blob => {
-                        const url = window.URL.createObjectURL(blob);
-                        const a = document.createElement("a");
-                        a.href = url;
-                        a.download = `User_${userId}_Task_Report.txt`;
-                        a.click();
-                        window.URL.revokeObjectURL(url);
-                    })
-                    .catch(error => alert("Error downloading report: " + error.message));
-            }
-        }
-    </script>
+        }</script>
 </body>
 </html>
