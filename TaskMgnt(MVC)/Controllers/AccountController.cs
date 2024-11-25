@@ -26,12 +26,14 @@ namespace TaskMgnt_MVC_.Controllers
 
         public AccountController()
         {
+            _httpClient = new HttpClient(); 
         }
 
         public AccountController(ApplicationUserManager userManager, ApplicationSignInManager signInManager )
         {
             UserManager = userManager;
             SignInManager = signInManager;
+            _httpClient = new HttpClient();
         }
 
         public ApplicationSignInManager SignInManager

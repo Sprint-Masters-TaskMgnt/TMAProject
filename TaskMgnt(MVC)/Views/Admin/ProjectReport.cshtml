@@ -1,11 +1,156 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿﻿
 
-namespace TaskMgnt_MVC_.Views.Admin
-{
-	public class ProjectReport
-	{
-	}
+@{
+    ViewBag.Title = "Project Reports";
 }
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+        background-size: cover;
+        background-repeat: no-repeat;
+        padding-top: 15px;
+    }
+
+    button {
+        text-align: center;
+        background-color: navy;
+        color: aliceblue;
+        border-block: solid;
+        border-block-color: darkblue;
+        border-radius: 10px;
+        cursor: pointer;
+        font-weight: bolder;
+        font-size: larger;
+        width: 300px;
+        height: 40px;
+        margin-left: 40px;
+    }
+
+    form {
+        margin: 20px;
+        padding: 20px;
+        text-align: left;
+    }
+
+        form label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            font-size: large;
+        }
+
+        form input {
+            height: 40px;
+            margin-bottom: 15px;
+            padding: 8px;
+            font-size: 1rem;
+            width: 350px;
+        }
+
+    #responseMessage {
+        display: block;
+        margin-top: 18px;
+        font-weight: bold;
+        text-align: center;
+    }
+
+
+    h2 > img {
+        position: absolute;
+        margin-left: 680px;
+        margin-top: 20px;
+        margin-bottom: 40px;
+    }
+</style>
+<h2>All Projects Report</h2>
+
+<!-- Button section -->
+<div style="margin-bottom: 20px;">
+    <button id="fetchReportBtn" class="btn btn-primary">Fetch All Projects Report</button>
+    <button id="downloadReportBtn" class="btn btn-success" style="display:none;">Download Report</button>
+</div>
+
+<!-- Report content display -->
+<div id="reportContent" style="margin-top: 20px; display: none;">
+    <h3>Report Details:</h3>
+    <pre id="reportDetails" style="background: #f9f9f9; padding: 10px; border: 1px solid #ddd; border-radius: 5px;"></pre>
+</div>
+
+<!-- AJAX Script -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    const apiBaseUrl = "https://localhost:7071/api/Report"; // Base API URL
+
+    $(document).ready(function () {
+        let reportFetched = false; // Flag to track if the report is fetched
+
+        // Fetch the consolidated report
+        $("#fetchReportBtn").on("click", function () {
+            if (reportFetched) {
+                alert("The report has already been fetched.");
+                return; // Prevent multiple fetches
+            }
+
+            // Disable the button and indicate loading state
+            $(this).prop("disabled", true).text("Fetching...");
+
+            $.ajax({
+                url: `${apiBaseUrl}/consolidated-report`, // Endpoint for fetching the report
+                method: "GET",
+                success: function (data) {
+                    if (data) {
+                        reportFetched = true; // Mark the report as fetched
+
+                        // Display the fetched report
+                        $("#reportContent").show();
+                        $("#reportDetails").text(data);
+
+                        // Enable and show the download button
+                        $("#downloadReportBtn").prop("disabled", false).show();
+
+                        // Reset fetch button text
+                        $("#fetchReportBtn").text("Fetch All Projects Report").prop("disabled", false);
+                    } else {
+                        alert("No projects available.");
+                        $("#fetchReportBtn").prop("disabled", false).text("Fetch All Projects Report");
+                    }
+                },
+                error: function (xhr) {
+                    const errorMessage = xhr.status === 404
+                        ? "Report not found."
+                        : `Error: ${xhr.status} ${xhr.statusText}`;
+                    alert(errorMessage);
+
+                    // Reset button state on error
+                    $("#fetchReportBtn").prop("disabled", false).text("Fetch All Projects Report");
+                }
+            });
+        });
+
+        // Download the consolidated report as a CSV file
+        $("#downloadReportBtn").on("click", function () {
+            $.ajax({
+                url: `${apiBaseUrl}/consolidated-report`, // Endpoint for downloading the report
+                method: "GET",
+                success: function (data) {
+                    if (data) {
+                        const blob = new Blob([data], { type: "text/csv" });
+                        const link = document.createElement("a");
+                        link.href = URL.createObjectURL(blob);
+                        link.download = "all_projects_report.csv"; // File name
+                        link.click();
+                    } else {
+                        alert("No data available for download.");
+                    }
+                },
+                error: function () {
+                    alert("Failed to download the report.");
+                }
+            });
+        });
+
+        // Initially hide and disable the download button
+        $("#downloadReportBtn").prop("disabled", true);
+    });
+</script>
