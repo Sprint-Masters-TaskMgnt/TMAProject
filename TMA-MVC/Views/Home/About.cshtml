@@ -1,9 +1,70 @@
-﻿@{
-    ViewBag.Title = "About";
-}
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
-    <h3>@ViewBag.Message</h3>
+﻿@*@{
+        ViewBag.Title = "About";
+    }
+    <main aria-labelledby="title">
+        <h2 id="title">@ViewBag.Title.</h2>
+        <h3>@ViewBag.Message</h3>
 
-    <p>Use this area to provide additional information.</p>
+        <p>Use this area to provide additional information.</p>
+    </main>*@
+
+
+
+@{
+    ViewBag.Title = "About";
+    ViewBag.Message = "Effortless Task Management for Teams and Individuals";
+}
+<main aria-labelledby="title" class="container mt-4">
+    <h2 id="title" class="text-primary">@ViewBag.Title</h2>
+    <h3 class="text-secondary">@ViewBag.Message</h3>
+
+    <p>
+        Welcome to our <strong>Task Management System</strong> – a platform designed to simplify your work, organize your tasks, and boost your productivity. Whether you’re an individual looking to manage daily tasks or a team working on a big project, we’ve got you covered.
+    </p>
+
+    <section class="mt-4">
+        <h4>Why Choose Us?</h4>
+        <ul>
+            <li>📅 <strong>Streamlined Scheduling:</strong> Plan and prioritize your tasks effortlessly.</li>
+            <li>✅ <strong>Customizable Workflows:</strong> Adapt the system to suit your needs.</li>
+            <li>📊 <strong>Detailed Reports:</strong> Analyze your performance with insightful data.</li>
+            <li>💬 <strong>Team Collaboration:</strong> Communicate effectively and stay connected.</li>
+        </ul>
+    </section>
+
+    <section class="mt-4">
+        <h4>Core Features</h4>
+        <div class="row">
+            <div class="col-md-4 text-center">
+                <img src="https://helpimg.s3.amazonaws.com/KCM/KCM_My+Dashboard/KCM_My+Dashboard+Task+Completion+Progress.png" alt="Task Tracking" class="img-fluid rounded-circle mb-2">
+                <h5>Task Tracking</h5>
+                <p>Monitor progress and ensure timely completion of every task.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <img src="https://blog.vantagecircle.com/content/images/size/w600/2023/01/10-Smart-Ways-to-Better-Team-Collaboration-1.png" alt="Collaboration" class="img-fluid rounded-circle mb-2">
+                <h5>Seamless Collaboration</h5>
+                <p>Work smarter with team-based task sharing and updates.</p>
+            </div>
+            <div class="col-md-4 text-center">
+                <img src="https://pyrus.com/en/blog/wp-content/uploads/2016/08/Business_Automation-web.png" alt="Automation" class="img-fluid rounded-circle mb-2">
+                <h5>Automation</h5>
+                <p>Save time by automating repetitive workflows.</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="mt-4">
+        <h4>Visualize Your Success</h4>
+        <p>
+            Our platform provides colorful dashboards, intuitive Gantt charts, and advanced reporting tools to keep you ahead of your goals. Experience a smoother way to manage your tasks with cutting-edge design.
+        </p>
+        <div class="text-center">
+            <img src="https://peoplesenseerp.com/wp-content/uploads/2018/12/Advanced-Reporting-M2M-Intuitive-ERP.jpg" alt="Dashboard Preview" class="img-fluid rounded shadow">
+        </div>
+    </section>
+
+    <section class="mt-4 text-center">
+        <h4>Get Started Today!</h4>
+        <p>Take control of your productivity and achieve more. Try our Task Management System now!</p>
+    </section>
 </main>

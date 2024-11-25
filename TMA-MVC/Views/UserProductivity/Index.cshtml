@@ -1,0 +1,247 @@
+﻿@*<!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>User Productivity Report</title>
+        <style>
+            /* General reset */
+            body {
+                margin: 0;
+                font-family: Arial, sans-serif;
+                background-color: #f4f4f9;
+                color: #333;
+            }
+
+
+            /* Input field styling */
+            #userId {
+                width: calc(100% - 20px);
+                padding: 10px;
+                margin-bottom: 20px;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                font-size: 1rem;
+            }
+
+            /* Button styling */
+            #downloadReport {
+                background: #007bff;
+                color: #fff;
+                border: none;
+                padding: 10px 20px;
+                font-size: 1rem;
+                border-radius: 5px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+            #downloadReport:hover {
+                background-color: #0056b3;
+            }
+
+
+
+                #userId {
+                    font-size: 0.9rem;
+                }
+
+                #downloadReport {
+                    font-size: 0.9rem;
+                    padding: 8px 16px;
+                }
+
+
+        </style>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    </head>
+    <body>
+        <div class="container">
+            <h1>User Productivity Report</h1>
+            <label for="userId">Enter User ID:</label>
+            <input type="text" id="userId" placeholder="e.g., 123" />
+            <button id="downloadReport">Download Report</button>
+        </div>
+
+        <script>
+            $(document).ready(function () {
+                $("#downloadReport").on("click", function () {
+                    const userId = $("#userId").val().trim(); // Get User ID from the input
+
+                    if (!userId) {
+                        alert("Please enter a valid User ID.");
+                        return;
+                    }
+
+                    // Replace this with your actual API URL for the User Productivity Report
+                    const apiUrl = `https://localhost:7071/api/UserTaskReport/UserProductivityReport/${userId}`;
+
+                    $.ajax({
+                        url: apiUrl,
+                        type: "GET",
+                        xhrFields: {
+                            responseType: 'blob' // Ensure the response is handled as a file
+                        },
+                        success: function (data, status, xhr) {
+                            const contentDisposition = xhr.getResponseHeader('Content-Disposition');
+                            const filename = contentDisposition
+                                ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '')
+                                : `User_${userId}_Productivity_Report.txt`; // Default filename if not provided
+
+                            const blob = new Blob([data], { type: 'text/plain' });
+                            const link = document.createElement('a');
+
+                            link.href = window.URL.createObjectURL(blob);
+                            link.download = filename;
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                        },
+                        error: function (xhr, status, error) {
+                            console.error("Error fetching report:", error);
+                            alert("Failed to download the report. Please check the User ID.");
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+    </html>*@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Productivity Report</title>
+    <style>
+        /* General reset */
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f9;
+            color: #333;
+        }
+
+        /* Center container */
+        .container {
+            max-width: 400px;
+            margin: 50px auto;
+            background: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        /* Heading styling */
+        .container h1 {
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+        }
+
+        /* Label styling */
+        .container label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 10px;
+            font-size: 1rem;
+            text-align: left;
+        }
+
+        /* Input field styling */
+        #userId {
+            width: calc(100% - 20px);
+            padding: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        /* Button styling */
+        #downloadReport {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        #downloadReport:hover {
+            background-color: #0056b3;
+        }
+
+        /* Add responsive behavior */
+        @*@media (max-width: 500px) {
+            .container {
+                padding: 15px;
+            }*@
+
+            #userId {
+                font-size: 0.9rem;
+            }
+
+            #downloadReport {
+                font-size: 0.9rem;
+                padding: 8px 16px;
+            }
+        }
+    </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>User Productivity Report</h1>
+        <label for="userId">Enter User ID:</label>
+        <input type="text" id="userId" placeholder="e.g., 123" />
+        <button id="downloadReport">Download Report</button>
+    </div>
+
+    <script>
+        $(document).ready(function () {
+            $("#downloadReport").on("click", function () {
+                const userId = $("#userId").val().trim(); // Get User ID from the input
+
+                if (!userId) {
+                    alert("Please enter a valid User ID.");
+                    return;
+                }
+
+                // Replace this with your actual API URL for the User Productivity Report
+                const apiUrl = `https://localhost:7071/api/UserTaskReport/UserProductivityReport/${userId}`;
+
+                $.ajax({
+                    url: apiUrl,
+                    type: "GET",
+                    xhrFields: {
+                        responseType: 'blob' // Ensure the response is handled as a file
+                    },
+                    success: function (data, status, xhr) {
+                        const contentDisposition = xhr.getResponseHeader('Content-Disposition');
+                        const filename = contentDisposition
+                            ? contentDisposition.split('filename=')[1]?.replace(/['"]/g, '')
+                            : `User_${userId}_Productivity_Report.txt`; // Default filename if not provided
+
+                        const blob = new Blob([data], { type: 'text/plain' });
+                        const link = document.createElement('a');
+
+                        link.href = window.URL.createObjectURL(blob);
+                        link.download = filename;
+                        document.body.appendChild(link);
+                        link.click();
+                        document.body.removeChild(link);
+                    },
+                    error: function (xhr, status, error) {
+                        console.error("Error fetching report:", error);
+                        alert("Failed to download the report. Please check the User ID.");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

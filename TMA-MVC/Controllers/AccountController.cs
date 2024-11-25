@@ -14,6 +14,7 @@ using Microsoft.Owin.Security;
 using Newtonsoft.Json;
 using TMA_MVC.Models;
 using TMA_MVC.DTO;
+using System.Runtime.Remoting.Messaging;
 
 namespace TMA_MVC.Controllers
 {
@@ -151,6 +152,7 @@ namespace TMA_MVC.Controllers
         }
 
 
+
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -159,8 +161,7 @@ namespace TMA_MVC.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = new ApplicationUser { UserName = model.UserName, Email = model.Email, PhoneNumber = model.PhoneNumber };
-
+                var user = new ApplicationUser { UserName = model.Email, Email = model.Email };
                 var result = await UserManager.CreateAsync(user, model.PasswordHash);
                 if (result.Succeeded)
                 {
@@ -174,9 +175,11 @@ namespace TMA_MVC.Controllers
 
                     var json = JsonConvert.SerializeObject(model);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    HttpResponseMessage httpResponseMessage = await _httpClient.PostAsync("https://localhost:7014/api/Users", content);
-                    if (httpResponseMessage.IsSuccessStatusCode)
+                    HttpResponseMessage response = await _httpClient.PostAsync("https://localhost:7071/api/Users", content);
+
+                    if (response.IsSuccessStatusCode)
                     {
+                        TempData["Message"] = "Registration successfull";
                         return RedirectToAction("Login", "Account");
                     }
                     var subject = "Welcome to our site!";
@@ -222,6 +225,7 @@ namespace TMA_MVC.Controllers
                 return false;
             }
         }
+        
         //
         // GET: /Account/ConfirmEmail
         [AllowAnonymous]

@@ -68,23 +68,19 @@
 </head>
 <body>
     <h1>User Task Report</h1>
+ Input to enter User ID 
+<h2>Enter User ID</h2>
+<form id="userIdForm">
+    <img src="https://www.allen.ac.in/ace2324/assets/images/register.png" id="img" style="width: 324px; height: 324px;">
 
-
-    <!-- Input to enter User ID -->
-    <h2>Enter User ID</h2>
-    <form id="userIdForm">
-        <img src="https://www.allen.ac.in/ace2324/assets/images/register.png" id="img" style="width: 324px; height: 324px;">
-
-        <label for="userId">User ID:</label>
-        <input type="text" id="userId" name="userId" required>
-        <button type="button" onclick="generateReport()">Generate Report</button>
-    </form>
-
-    <!-- Area to display the report -->
-    <div id="report"></div>
-
-    <!-- Download button -->
-    <div id="downloadButtonContainer" style="display: none;">
+    <label for="userId">User ID:</label>
+    <input type="text" id="userId" name="userId" required>
+    <button type="button" onclick="generateReport()">Generate Report</button>
+</form>
+ Area to display the report 
+<div id="report"></div>
+ Download button 
+<div id="downloadButtonContainer" style="display: none;">
         <button id="downloadReportBtn">Download Report</button>
     </div>
 
@@ -187,3 +183,4 @@
     </script>
 </body>
 </html>
+

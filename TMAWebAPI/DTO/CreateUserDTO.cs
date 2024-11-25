@@ -14,6 +14,6 @@ namespace TMAWebAPI.DTO
         public string? PasswordHash { get; set; }
         public string UserName { get; set; } = null!;
 
-        public int RoleId { get; set; }
+        public int RoleId { get; set; } = 2;
     }
 }

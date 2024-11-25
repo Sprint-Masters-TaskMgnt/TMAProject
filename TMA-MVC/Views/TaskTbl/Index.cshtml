@@ -1,0 +1,515 @@
+﻿﻿
+<!--<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task API - CRUD Operations</title>
+</head>
+<body>
+    <h1>Task Management - CRUD Operations</h1>-->
+<!-- Add Task Form -->
+<!--<h2>Add Task</h2>
+    <form id="TaskForm">
+        <label for="taskId">Task ID:</label>
+        <input type="number" id="taskId" name="taskId"><br><br>
+
+        <label for="taskName">Task Name:</label>
+        <input type="text" id="taskName" name="taskName" required><br><br>
+
+        <label for="projectId">Project Id:</label>
+        <input type="number" id="projectId" name="projectId" required><br><br>
+
+        <label for="assignedToUserId">Assigned To UserId:</label>
+        <input type="text" id="assignedToUserId" name="assignedToUserId" required><br><br>
+
+         <label for="estimatedCost">Estimated Cost:</label>
+ <input type="text" id="estimatedCost" name="estimatedCost" required><br><br>
+
+         <label for="estimatedHours">Estimated Hours:</label>
+ <input type="text" id="EstimatedHours" name="EstimatedHours" required><br><br>
+
+         <label for="taskStartDate">Task StartDate :</label>
+ <input type="text" id="taskStartDate" name="taskStartDate" required><br><br>
+
+         <label for="taskEndDate">Task EndDate:</label>
+ <input type="text" id="taskEndDate" name="taskEndDate" required><br><br>
+
+                <label for="priority">Priority:</label>
+<input type="text" id="priority" name="priority" required><br><br>
+
+                <label for="status">Status:</label>
+<input type="text" id="status" name="status" required><br><br>
+
+        <button type="button" onclick="addTask()">Add Task (POST)</button>
+        <button type="button" onclick="updateTask()">Update Task (PUT)</button>
+    </form>
+
+    <label id="responseMessage" style="color: green;"></label>-->
+<!-- DELETE Task Form -->
+<!--<h2>DELETE Task by ID</h2>
+<form id="deleteTaskForm">
+    <label for="deleteTaskId">Task ID:</label>
+    <input type="number" id="deleteTaskId" name="deleteTaskId" required><br><br>
+    <button type="button" onclick="deleteTask()">Delete Task</button>
+</form>-->
+<!-- View All Tasks -->
+<!--<h2>View All Tasks</h2>
+<button type="button" id="toggleTasksButton" onclick="fetchAllTask()">Get All Tasks</button>
+<div id="taskList"></div>-->
+<!-- View Task by Id -->
+<!--<h2>GET Task by ID</h2>
+<form id="getTaskForm">
+    <label for="getTaskId">Task ID:</label>
+    <input type="number" id="getTaskId" name="taskId" required><br><br>
+    <button type="button" onclick="getTask()">GET Task</button>
+</form>
+<pre id="getResult"></pre>
+
+
+    <script>
+       const taskApiUrl = 'https://localhost:7000/api/TaskTbls';
+       let isTaskListVisible = false; // Flag to track visibility
+
+
+        // Function to display messages
+        function displayMessage(message, isError = false) {
+        const responseLabel = document.getElementById("responseMessage");
+        responseLabel.style.color = isError ? "red" : "green";
+        responseLabel.textContent = message;
+    }
+
+        // Function to add a new task (POST)
+        function addTask() {
+            const taskId = document.getElementById("taskId").value;
+            const taskName = document.getElementById("taskName").value;
+            const projectId = document.getElementById("projectId").value;
+            const assignedToUserId = document.getElementById("assignedToUserId").value;
+            const estimatedCost = document.getElementById("estimatedCost").value;
+            const estimatedHours = document.getElementById("estimatedHours").value;
+            const taskStartDate = document.getElementById("taskStartDate").value;
+            const taskEndDate = document.getElementById("taskEndDate").value;
+            const priority = document.getElementById("priority").value;
+            const status = document.getElementById("status").value;
+
+
+            if (!taskId || !taskName || !projectId || !assignedToUserId || !estimatedCost || !estimatedHours || !taskStartDate || !taskEndDate || !priority || !status) {
+                displayMessage("All fields are required!", true);
+                return;
+            }
+
+            const data = {
+                taskId: parseInt(taskId),
+                taskName: taskName,
+                projectId: parseInt(projectId),
+                assignedToUserId: assignedToUserId,
+                estimatedCost: parseDecimal(estimatedCost),
+                 estimatedHours: parseDecimal(estimatedHours),
+                 taskStartDate: taskStartDate,
+                 taskEndDate: taskEndDate,
+                 priority: priority,
+                 status: status
+            };
+
+            fetch(taskApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(data => {
+                displayMessage("Task added successfully!");
+                displaysingleTasks([data]);
+            });
+        }
+
+        // Function to update an Task (PUT)
+        function updateTask() {
+             const taskId = document.getElementById("taskId").value;
+              const taskName = document.getElementById("taskName").value;
+              const projectId = document.getElementById("projectId").value;
+              const assignedToUserId = document.getElementById("assignedToUserId").value;
+              const estimatedCost = document.getElementById("estimatedCost").value;
+              const estimatedHours = document.getElementById("estimatedHours").value;
+              const taskStartDate = document.getElementById("taskStartDate").value;
+              const taskEndDate = document.getElementById("taskEndDate").value;
+              const priority = document.getElementById("priority").value;
+              const status = document.getElementById("status").value;
+
+            // Validate fields before making the request
+       if (!taskId || !taskName || !projectId || !assignedToUserId|| !estimatedCost || !estimatedHours || !taskStartDate || !taskEndDate || !priority || !status) {
+              displayMessage("All fields are required!", true);
+              return;
+          }
+
+            // Prepare the data object
+            const data = {
+                 taskId: parseInt(taskId),
+                   taskName: taskName,
+                   projectId: parseInt(projectId),
+                   assignedToUserId: assignedToUserId,
+                   estimatedCost: parseDecimal(estimatedCost),
+                    estimatedHours: parseDecimal(estimatedHours),
+                    taskStartDate: taskStartDate,
+                    taskEndDate: taskEndDate,
+                    priority: priority,
+                    status: status
+            };
+
+            // Send the PUT request
+            fetch(${taskApiUrl}/${taskId}, {
+                method: 'PUT',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => {
+                if (response.status === 204) {
+                    // Update message if status is 204 No Content (successful update)
+                    displayMessage("Task updated successfully!");
+                    return null;
+                }
+
+                if (!response.ok) {
+                    throw new Error(Request failed with status ${response.status});
+                }
+
+                // If there is a response body, parse it
+                return response.json();
+            })
+            .then(data => {
+                if (data) {
+                    displaysingleTasks([data]);
+                }
+                // Ensure the message is displayed even if there's no response body
+                displayMessage("Task updated successfully!");
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                displayMessage(Error: ${error.message}, true);
+            });
+        }
+
+        // Function to delete an admin (DELETE)
+        function deleteTask() {
+    const taskId = document.getElementById("deleteTaskId").value;
+
+    if (!taskId) {
+        displayMessage("Please enter an Task ID to delete", true);
+        return;
+    }
+
+    fetch(${taskApiUrl}/${taskId}, { method: 'DELETE' })
+        .then(response => {
+            if (response.status === 204) {
+                displayMessage(Task ID ${taskId} deleted successfully!);
+                fetchAllTasks(); // Refresh the Task list
+            } else if (response.status === 404) {
+                displayMessage(Task with ID ${taskId} not found, true);
+            } else {
+                return response.json(); // Parse other responses for error details
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            displayMessage(Error: ${error.message}, true);
+        });
+    }
+
+        // Function to fetch all tasks (GET)
+        // function fetchAllTasks() {
+        //     fetch(taskApiUrl)
+        //         .then(response => response.json())
+        //         .then(data => displayTasks(data));
+        // }
+
+
+        // Function to fetch all Task (GET)
+        function fetchAllTasks() {
+        const tasksList = document.getElementById("tasksList");
+        const button = document.getElementById("toggleTasksButton");
+
+        if (isTaskListVisible) {
+            // If the list is currently visible, hide it
+            adminsList.innerHTML = "";
+            button.textContent = "Get All Tasks";
+        } else {
+            // If the list is hidden, fetch the data and display it
+            fetch(aaskApiUrl)
+                .then(response => response.json())
+                .then(data => displayTasks(data));
+            button.textContent = "Hide Task";
+        }
+
+        isTaskListVisible = !isAdminListVisible; // Toggle the flag
+    }
+
+    // Function to fetch Tasks by ID (GET)
+    function getTask() {
+    const taskId = document.getElementById("getTaskId").value;
+
+
+    fetch(${taskApiUrl}/${taskId})
+        .then(response => response.json())  // Parse the JSON response
+        .then(data => {
+            const result = `
+                Task ID: ${data.taskId}
+                Task Name: ${data.taskName}
+                Project Id: ${data.projectId}
+                Assigned To UserId: ${data.assignedToUserId}
+                Title: ${data.title}
+                Estimated Cost: ${data.estimatedCost}
+                Estimated Hours: ${data.estimatedHours}
+                Task StartDate: ${data.taskStartDate}
+                Task EndDate: ${data.taskEndDate}
+                Priority: ${data.priority}
+                Status: ${data.status}
+
+            `;  // Format the response as plain text
+            document.getElementById("getResult").textContent = result;  // Display it in the <pre> tag
+        })
+        .catch(error => console.error('Error:', error));
+}
+        // Function to display a single Task
+        function displaysingleTasks(tasks) {
+            const tasksList = document.getElementById("tasksList");
+            tasksList.innerHTML = "<h3>Task:</h3>";
+            tasksList.innerHTML += tasks.map(task => `
+                <div>
+                    <p><b>Task ID: ${data.taskId}</p>
+                    <p><b>Task Name: ${data.taskName}</p>
+                    <p><b>Project Id: ${data.projectId}</p>
+                    <p><b>Assigned To UserId: ${data.assignedToUserId}</p>
+                     <p><b>Estimated Cost: ${data.estimatedCost}</p>
+                     <p><b>Task StartDate: ${data.taskStartDate}</p>
+                     <p><b>Task EndDate: ${data.taskEndDate}</p>
+                     <p><b> Priority: ${data.priority}</p>
+                     <p><b>Status: ${data.status}</p>
+                    <hr>
+                </div>
+            `).join('');
+        }
+
+
+        // Function to display all tasks
+        function displayTasks(tasks) {
+        const tasksList = document.getElementById("tasksList");
+        tasksList.innerHTML = "<h3>All Tasks:</h3>";
+        tasksList.innerHTML += tasks.map(task => `
+            <div>
+                 <p><b>Task ID: ${data.taskId}</p>
+                  <p><b>Task Name: ${data.taskName}</p>
+                  <p><b>Project Id: ${data.projectId}</p>
+                  <p><b>Assigned To UserId: ${data.assignedToUserId}</p>
+                   <p><b>Estimated Cost: ${data.estimatedCost}</p>
+                   <p><b>Task StartDate: ${data.taskStartDate}</p>
+                   <p><b>Task EndDate: ${data.taskEndDate}</p>
+                   <p><b> Priority: ${data.priority}</p>
+                   <p><b>Status: ${data.status}</p>
+                <hr>
+            </div>
+        `).join('');
+    }
+    </script>
+</body>
+</html>-->
+
+
+@{
+    ViewBag.Title = "View";
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Task Management</title>
+</head>
+<body>
+
+    <form id="taskForm">
+        <!-- Form Fields -->
+        <label for="taskId">Task Id: </label>
+        <input type="number" id="taskId">
+        <br /><br />
+
+        <label for="taskName">Task Name: </label>
+        <input type="text" id="taskName">
+        <br /><br />
+
+        <label for="projectId">Project Id: </label>
+        <input type="number" id="projectId">
+        <br /><br />
+
+        <label asp-for="assignedToUserId">Assigned To UserId</label>
+        <select asp-for="assignedToUserId" id="assignedToUserId">
+            @*onclick="userList()" asp-items="ViewBag.Users"*@
+            <option>Select User</option>
+        </select>
+        <span asp-validation-for="assignedToUserId" class="text-danger"></span>
+        <br /><br />
+
+        <label for="estimatedCost">Estimated Cost: </label>
+        <input type="number" id="estimatedCost">
+        <br /><br />
+
+        <label for="estimatedHours">Estimated Hours: </label>
+        <input type="number" id="estimatedHours">
+        <br /><br />
+
+        <label for="taskStartDate">Task Start Date: </label>
+        <input type="date" id="taskStartDate">
+        <br /><br />
+
+        <label for="taskEndDate">Task End Date: </label>
+        <input type="date" id="taskEndDate">
+        <br /><br />
+
+
+        <!-- Dropdown for Priority -->
+        <label for="priority">Priority: </label>
+        <select id="priority">
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+        <br /><br />
+
+        <!-- Dropdown for Status -->
+        <label for="status">Status: </label>
+        <select id="status">
+            <option value="Not Started">Not Started</option>
+            <option value="In Progress">In Progress</option>
+            <option value="Completed">Completed</option>
+        </select>
+        <br /><br />
+
+        <button type="button" onclick="createTask()">Assign Task</button>
+    </form>
+
+    <label id="responseMessage" style="color:rgb(71,223,71)"></label>
+
+    <h2>View All Tasks</h2>
+    <button type="button" onclick="fetchAllTasks()">Get All Tasks</button>
+    <div id="taskList"></div>
+
+    <script>
+        const apiUrl = 'https://localhost:7000/api/TaskTbls';  // Task API endpoint
+        const userApiUrl = 'https://localhost:7000/api/AspNetUser';  // User API endpoint for validation
+
+        //function userList() {
+        //    foreach(var e in userApiUrl) {
+        //        ViewData["User"] = new SelectList(userApiUrl, "Id", "Email");
+        //    }
+
+        //}
+
+        // Function to display messages on the page
+        function displayMessage(message, isError = false) {
+            const responseLabel = document.getElementById("responseMessage");
+            responseLabel.style.color = isError ? "red" : "green";
+            responseLabel.textContent = message;
+        }
+
+        // Assign Task function that validates User Id and then creates the task
+        function assignTask() {
+            const userId = document.getElementById("userId").value;
+            if (!userId) {
+                return displayMessage("Please enter User Id to validate", true);
+            }
+
+            // Check if the user exists
+            fetch(`${userApiUrl}/${userId}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`User with ID ${userId} not found`);
+                    }
+                    return response.json();
+                })
+                .then(user => {
+                    // If user exists, create the task
+                    createTask();
+                })
+                .catch(error => displayMessage(`Error: ${error.message}`, true));
+        }
+
+        // Create a new task (POST)
+        function createTask() {
+            const data = getFormData();
+
+            // Ensure all required fields are populated
+            if (!data.taskId || !data.taskName || !data.projectId || !data.assignedToUserId || !data.estimatedCost || !data.estimatedHours || !data.taskStartDate || !data.taskEndDate || !data.priority || !data.status) {
+                return displayMessage("Please fill in all required fields: Title, Status, Priority, and Description", true);
+            }
+
+            fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        return response.json().then(errorData => {
+                            // Display detailed validation error messages
+                            const errorMessages = Object.entries(errorData.errors)
+                                .map(([field, errors]) => `${field}: ${errors.join(", ")}`)
+                                .join("\n");
+                            displayMessage(`Validation Errors:\n${errorMessages}`, true);
+                            throw new Error(errorMessages);
+                        });
+                    }
+                    return response.json();
+                })
+                .then(() => {
+                    displayMessage('Task assigned successfully');
+                    fetchAllTasks(); // Refresh the task list after assignment
+                })
+                .catch(error => displayMessage(`Error: ${error.message}`, true));
+        }
+
+        // Helper function to get form data in a flat structure
+        function getFormData() {
+            return {
+                taskId: document.getElementById("taskId").value ? parseInt(document.getElementById("taskId").value) : null,
+                taskName: document.getElementById("taskName").value.trim(),
+                projectId: document.getElementById("projectId").value.trim(),
+                AssignedToUserId: document.getElementById("assignedToUserId").value,
+                estimatedCost: document.getElementById("estimatedCost").value,
+                estimatedHours: parseInt(document.getElementById("estimatedHours").value),
+                taskStartDate: parseInt(document.getElementById("taskStartDate").value),
+                taskEndDate: parseInt(document.getElementById("taskEndDate").value),
+                priority: document.getElementById("priority").value,
+                status: document.getElementById("status").value
+            };
+        }
+
+        // Function to display tasks in the taskList div
+        function fetchAllTasks() {
+            fetch(apiUrl, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(tasks => displayTasks(tasks))
+                .catch(error => displayMessage(`Error: ${error.message}`, true));
+        }
+
+        // Function to display tasks in the taskList div
+        function displayTasks(tasks) {
+            const taskList = document.getElementById("taskList");
+            taskList.innerHTML = tasks.map(task =>
+                `<p>TaskId: ${task.taskId}, TaskName: ${task.taskName}, ProjectId: ${task.projectId}, Assigned To UserId: ${task.assignedToUserId},Estimated Cost: ${task.estimatedCost}, Estimated Hours: ${task.estimatedHours}, Task StartDate: ${task.taskStartDate}, Task EndDate: ${task.taskEndDate}, Priority: ${task.priority}, Status: ${task.status}</p>`
+            ).join('');
+        }
+    </script>
+</body>
+</html>

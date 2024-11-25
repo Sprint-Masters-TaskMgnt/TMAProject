@@ -36,7 +36,6 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader());
 });
 
-
 var app = builder.Build();
 
 app.UseCors("AllowAll");

@@ -1,6 +1,4 @@
-﻿﻿
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -42,7 +40,6 @@
                 margin-bottom: 5px;
                 font-weight: bold;
                 font-size: large;
-                /*            align-content: center;*/
             }
 
             form input, form select, form button {
@@ -56,25 +53,64 @@
                 width: 350px;
             }
 
-        #responseMessage {
-            display: block;
-            margin-top: 18px;
-            font-weight: bold;
-            text-align: center;
-        }
-
         #updateStatusForm > img {
             position: absolute;
             margin-left: 680px;
             margin-top: 20px;
             margin-bottom: 40px;
         }
+
+
+        /* Modal styles */
+        #successPopup {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5); /* Dark overlay */
+        }
+
+        #popupContent {
+            background-color: white;
+            margin: 15% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 40%;
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        #popupMessage {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: green;
+            margin-bottom: 20px;
+        }
+
+        #closePopup {
+            background-color: navy;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+            #closePopup:hover {
+                background-color: darkred;
+            }
     </style>
 </head>
 <body>
     <h1>Update Task Status</h1>
     <form id="updateStatusForm">
-        <img src="https://static.vecteezy.com/system/resources/previews/015/124/638/original/time-task-gradient-icon-png.png" id="img" style="width: 380px; height: 490px;"> <label for="taskId">Task Id: </label>
+        <img src="https://static.vecteezy.com/system/resources/previews/015/124/638/original/time-task-gradient-icon-png.png" id="img" style="width: 380px; height: 490px;">
+        <label for="taskId">Task Id: </label>
         <input type="number" id="taskId" placeholder="Enter Task ID" required>
         <br /><br />
 
@@ -101,18 +137,30 @@
         <button type="button" onclick="updateTaskStatus()">Update Task</button>
     </form>
 
-    <label id="responseMessage" style="color:green"></label>
+    <!-- Success Popup -->
+    <div id="successPopup">
+        <div id="popupContent">
+            <p id="popupMessage">Updated Successfully!</p>
+            <button id="closePopup" onclick="closeSuccessPopup()">Close</button>
+        </div>
+    </div>
 
     <script>
-        const apiUrl = 'https://localhost:7000/api/TaskTbls'; // Base API URL
+        const apiUrl = 'https://localhost:7071/api/TaskTbls'; // Base API URL
 
-        // Display success or error messages
-        function displayMessage(message, isError = false) {
-            const responseLabel = document.getElementById("responseMessage");
-            responseLabel.style.color = isError ? "red" : "green";
-            responseLabel.textContent = message;
+        // Show success popup
+        function showSuccessPopup(message) {
+            const popupMessage = document.getElementById('popupMessage');
+            popupMessage.textContent = message || "Updated Successfully!";
+            document.getElementById('successPopup').style.display = 'block';
         }
 
+        // Close success popup
+        function closeSuccessPopup() {
+            document.getElementById('successPopup').style.display = 'none';
+        }
+
+        // Update task status
         // Update task status
         function updateTaskStatus() {
             const taskId = document.getElementById("taskId").value;
@@ -120,12 +168,11 @@
             const priority = document.getElementById("priority").value;
             const taskEndDate = document.getElementById("taskEndDate").value;
 
-            if (!taskId) return displayMessage("Please enter Task ID to update status", true);
-            if (!newStatus) return displayMessage("Please select a status to update", true);
-            if (!priority) return displayMessage("Please select a priority", true);
-            if (!taskEndDate) return displayMessage("Please select a task end date", true);
+            if (!taskId) return alert("Please enter Task ID to update status");
+            if (!newStatus) return alert("Please select a status to update");
+            if (!priority) return alert("Please select a priority");
+            if (!taskEndDate) return alert("Please select a task end date");
 
-            // Check if the task EndDate is within the next 24 hours
             const endDate = new Date(taskEndDate);
             const now = new Date();
             const hoursToDueDate = (endDate - now) / (1000 * 60 * 60);
@@ -133,35 +180,50 @@
                 alert("This task is due within the next 24 hours. Please prioritize it!");
             }
 
-            // Prepare the data for the PATCH request
             const requestData = {
                 status: newStatus,
                 priority: priority,
                 taskEndDate: taskEndDate
             };
 
-            fetch(`${apiUrl}/${taskId}`, {
+            fetch(${ apiUrl } / ${ taskId }, {
                 method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(requestData) // Sending data to the server
+                body: JSON.stringify(requestData)
             })
                 .then(response => {
-                    // Check if response is OK
                     if (!response.ok) {
-                        return response.json().then(err => {
-                            throw new Error(err?.message || "Failed to update task.");
+                        // Handle non-OK responses
+                        return response.text().then(text => {
+                            throw new Error(text || "Failed to update task.");
                         });
                     }
-                    return response.json(); // Parse response JSON
+
+                    // Check if the response body is empty
+                    if (response.status === 204 || response.bodyUsed) {
+                        showSuccessPopup("Updated Successfully!");
+                        return;
+                    }
+
+                    // Try parsing the response JSON
+                    return response.json().catch(() => {
+                        throw new Error("Failed to parse JSON response.");
+                    });
                 })
                 .then(data => {
-                    const message = data?.Message || "Task updated successfully.";
-                    displayMessage(message);
+                    if (data) {
+                        const message = data?.Message || "Task updated successfully.";
+                        showSuccessPopup(message);
+                    }
                 })
-                .catch(error => displayMessage(`Error: ${error.message}`, true));
+                .catch(error => {
+                    console.error(error);
+                    alert(Error: ${ error.message });
+                });
         }
+
     </script>
 </body>
 </html>

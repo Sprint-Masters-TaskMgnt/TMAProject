@@ -4,7 +4,7 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 
-namespace TaskMgntWebApplication.Controllers
+namespace TMA_MVC.Controllers
 {
     public class AdminController : Controller
     {

@@ -173,6 +173,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\ManageController.cs" />
     <Compile Include="Controllers\UserController.cs" />
+    <Compile Include="Controllers\UserProductivityController.cs" />
     <Compile Include="DTO\CreateUserDTO.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -268,6 +269,7 @@
     <Content Include="Views\User\TaskTbl.cshtml" />
     <Content Include="Views\User\UpdateProfile.cshtml" />
     <Content Include="Views\User\UpdateTask.cshtml" />
+    <Content Include="Views\UserProductivity\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
