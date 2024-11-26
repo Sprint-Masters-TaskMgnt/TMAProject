@@ -1,219 +1,337 @@
-﻿<!DOCTYPE html>
+﻿﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Management - TaskTbl</title>
+    <title>Task Management</title>
+
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            padding: 10px;
+            margin: 20px;
+            background-color: #f4f4f9;
         }
 
-        h1, h2 {
-            text-align: center;
-            color: #2c3e50;
-            font-size: 1.5em;
+        /* Form and modal layout */
+        .form-container {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
         }
 
-        #taskForm {
-            background-color: #fff;
-            padding: 15px;
-            border-radius: 5px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            max-width: 300px;
-            margin: 0 auto;
-            font-size: 0.9em;
+        .form-group {
+            margin-bottom: 15px;
         }
 
-        input[type="text"], input[type="number"], input[type="date"] {
+        label {
+            font-size: 16px;
+            color: #333;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="date"],
+        select {
             width: 100%;
-            padding: 6px;
-            margin: 8px 0;
-            border-radius: 4px;
-            border: 1px solid #ccc;
-            font-size: 0.9em;
+            padding: 10px;
+            margin-top: 5px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
         }
 
         button {
-            padding: 8px;
-            width: 100%;
-            background-color: #3498db;
+            padding: 12px 20px;
             border: none;
+            background-color: #4CAF50;
             color: white;
-            font-size: 0.9em;
             cursor: pointer;
-            margin-top: 5px;
+            border-radius: 5px;
+            font-size: 16px;
+            margin-right: 10px;
         }
 
             button:hover {
-                background-color: #2980b9;
+                background-color: #45a049;
             }
 
-        #taskList table {
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
             width: 100%;
-            border-collapse: collapse;
-            margin-top: 15px;
-            font-size: 0.85em;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.3);
+            padding-top: 100px;
         }
 
-        #taskList th, #taskList td {
-            padding: 8px;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        #taskList th {
-            background-color: #2980b9;
-            color: white;
-        }
-
-        #responseMessage {
+        .modal-content {
+            background-color: #fff;
+            margin: 5% auto;
+            padding: 30px;
+            width: 50%;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             text-align: center;
-            margin-top: 15px;
-            font-weight: bold;
-            font-size: 0.9em;
         }
+
+            .modal-content h2 {
+                font-size: 24px;
+                color: #4CAF50;
+                margin-bottom: 20px;
+            }
+
+            .modal-content p {
+                font-size: 16px;
+                margin-bottom: 10px;
+                color: #333;
+            }
+
+        .close {
+            color: #aaa;
+            font-size: 28px;
+            font-weight: bold;
+            position: absolute;
+            top: 10px;
+            right: 25px;
+        }
+
+            .close:hover,
+            .close:focus {
+                color: black;
+                text-decoration: none;
+                cursor: pointer;
+            }
+
+        .error {
+            color: red;
+            font-size: 14px;
+        }
+
+        .success {
+            color: green;
+            font-size: 14px;
+        }
+
+        .task-details {
+            padding: 20px;
+            margin-top: 20px;
+            background-color: #f9f9f9;
+            border-radius: 10px;
+            border: 1px solid #ddd;
+            list-style-type: none;
+        }
+
+            .task-details li {
+                padding: 8px 0;
+                font-size: 16px;
+                color: #333;
+            }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </head>
 <body>
-    <h1>Task Management - TaskTbl</h1>
 
-    <div id="taskForm">
-        <h2>Add/Update Task</h2>
-        <label for="taskId">Task ID:</label>
-        <input type="number" id="taskId" name="taskId">
+    <h1>Task Management System</h1>
 
-        <label for="taskName">Task Name:</label>
-        <input type="text" id="taskName" name="taskName" required>
+    <!-- Task Form -->
+    <div class="form-container">
+        <h2>Assign a New Task</h2>
+        <form id="taskForm">
+            <div class="form-group">
+                <label for="taskId">Task Id:</label>
+                <input type="number" id="taskId" placeholder="Enter Task Id">
+            </div>
+            <div class="form-group">
+                <label for="taskName">Task Name:</label>
+                <input type="text" id="taskName" placeholder="Enter Task Name" required>
+            </div>
+            <div class="form-group">
+                <label for="projectId">Project Id:</label>
+                <input type="number" id="projectId" placeholder="Enter Project Id" required>
+            </div>
+            <div class="form-group">
+                <label for="assignedToUserId">Assigned To (User Id):</label>
+                <input type="number" id="assignedToUserId" placeholder="Enter User Id" required>
+            </div>
+            <div class="form-group">
+                <label for="taskStartDate">Task Start Date:</label>
+                <input type="date" id="taskStartDate" required>
+            </div>
+            <div class="form-group">
+                <label for="taskEndDate">Task End Date:</label>
+                <input type="date" id="taskEndDate" required>
+            </div>
+            <div class="form-group">
+                <label for="priority">Priority:</label>
+                <select id="priority" required>
+                    <option value="Low">Low</option>
+                    <option value="Medium">Medium</option>
+                    <option value="High">High</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" required>
+                    <option value="Not Started">Not Started</option>
+                    <option value="In Progress">In Progress</option>
+                    <option value="Completed">Completed</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="description">Description:</label>
+                <input type="text" id="description" required>
+            </div>
 
-        <label for="description">Description:</label>
-        <input type="text" id="description" name="description" required>
-
-        <label for="status">Status:</label>
-        <input type="text" id="status" name="status" required>
-
-        <label for="taskEndDate">End Date:</label>
-        <input type="date" id="taskEndDate" name="taskEndDate" required>
-
-        <label for="priority">Priority:</label>
-        <input type="number" id="priority" name="priority" required>
-
-        <label for="assignedToUserId">Assigned User ID:</label>
-        <input type="number" id="assignedToUserId" name="assignedToUserId" required>
-
-        <label for="projectId">Project ID:</label>
-        <input type="number" id="projectId" name="projectId" required>
-
-        <button type="button" onclick="createTask()">Create Task</button>
-        <button type="button" onclick="updateTask()">Update Task</button>
-        <button type="button" onclick="deleteTask()">Delete Task</button>
+            <button type="button" onclick="assignTask()">Assign Task</button>
+            <button type="button" onclick="deleteTaskById()">Delete Task</button>
+        </form>
     </div>
 
-    <h2>Task List</h2>
-    <button type="button" onclick="fetchTasks()">Get All Tasks</button>
-    <div id="taskList"></div>
+    <!-- View Task -->
+    <div class="form-container">
+        <h2>View Task</h2>
+        <div class="form-group">
+            <label for="retrieveTaskId">Task Id:</label>
+            <input type="number" id="retrieveTaskId" placeholder="Enter Task Id">
+            <button type="button" onclick="getTaskById()">View Task</button>
+        </div>
+    </div>
 
-    <div id="responseMessage"></div>
+    <!-- Response Modal -->
+    <div id="responseModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2>Task Details</h2>
+            <div id="responseMessage"></div>
+            <ul id="taskDetails" class="task-details"></ul>
+        </div>
+    </div>
 
     <script>
-        const apiUrl = 'https://localhost:7071/api/TaskTbls';
+        const apiUrl = 'https://localhost:7071/api/TaskTbls'; // Task API
 
-        function displayMessage(message, isError = false) {
-            const messageDiv = document.getElementById("responseMessage");
-            messageDiv.style.color = isError ? "red" : "green";
-            messageDiv.innerText = message;
+        function handleResponse(response) {
+            if (response.status === 204) {
+                return null;
+            }
+
+            const contentType = response.headers.get("Content-Type");
+
+            if (contentType && contentType.includes("application/json")) {
+                return response.json();
+            } else {
+                return response.text();
+            }
         }
 
-        function fetchTasks() {
-            $.ajax({
-                url: apiUrl,
-                method: 'GET',
-                success: function(tasks) {
-                    let taskTable = '<table><tr><th>ID</th><th>Name</th><th>Description</th><th>Status</th><th>End Date</th><th>Priority</th><th>User ID</th><th>Project ID</th></tr>';
-                    tasks.forEach(task => {
-                        taskTable += `<tr>
-                            <td>${task.taskId}</td>
-                            <td>${task.taskName}</td>
-                            <td>${task.description}</td>
-                            <td>${task.status}</td>
-                            <td>${task.taskEndDate}</td>
-                            <td>${task.priority}</td>
-                            <td>${task.assignedToUserId}</td>
-                            <td>${task.projectId}</td>
-                        </tr>`;
-                    });
-                    taskTable += '</table>';
-                    document.getElementById("taskList").innerHTML = taskTable;
-                },
-                error: function() {
-                    displayMessage("Failed to retrieve tasks.", true);
-                }
-            });
-        }
+        // Assign Task
+        function assignTask() {
+            const taskData = getFormData();
+            if (!taskData) return;
 
-        function createTask() {
-            const taskData = getTaskData();
-            $.ajax({
-                url: apiUrl,
+            fetch(apiUrl, {
                 method: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify(taskData),
-                success: function() {
-                    displayMessage("Task created successfully.");
-                    fetchTasks();
-                },
-                error: function() {
-                    displayMessage("Failed to create task.", true);
-                }
-            });
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(taskData)
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to create task.");
+                    }
+                    return handleResponse(response);
+                })
+                .then(() => {
+                    displayMessage("Task assigned successfully.");
+                })
+                .catch(error => displayMessage(error.message, true));
         }
 
-        function updateTask() {
-            const taskData = getTaskData();
-            $.ajax({
-                url: `${apiUrl}/${taskData.taskId}`,
-                method: 'PUT',
-                contentType: 'application/json',
-                data: JSON.stringify(taskData),
-                success: function() {
-                    displayMessage("Task updated successfully.");
-                    fetchTasks();
-                },
-                error: function() {
-                    displayMessage("Failed to update task.", true);
-                }
-            });
-        }
-
-        function deleteTask() {
+        // Delete Task by ID
+        function deleteTaskById() {
             const taskId = document.getElementById("taskId").value;
-            $.ajax({
-                url: `${apiUrl}/${taskId}`,
-                method: 'DELETE',
-                success: function() {
+            if (!taskId || isNaN(taskId)) {
+                return displayMessage("Please enter a valid Task ID (number).", true);
+            }
+
+            fetch(`${apiUrl}/${taskId}`, { method: 'DELETE' })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Failed to delete task.");
+                    }
+                    return handleResponse(response);
+                })
+                .then(() => {
                     displayMessage("Task deleted successfully.");
-                    fetchTasks();
-                },
-                error: function() {
-                    displayMessage("Failed to delete task.", true);
-                }
-            });
+                })
+                .catch(error => displayMessage(error.message, true));
         }
 
-        function getTaskData() {
-            return {
-                taskId: parseInt(document.getElementById("taskId").value),
+        // Fetch Task by ID
+        function getTaskById() {
+            const taskId = document.getElementById("retrieveTaskId").value;
+            if (!taskId || isNaN(taskId)) {
+                return displayMessage("Please enter a valid Task ID (number).", true);
+            }
+
+            fetch(`${apiUrl}/${taskId}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error("Task not found.");
+                    }
+                    return handleResponse(response);
+                })
+                .then(task => {
+                    if (task) {
+                        const taskDetails = `
+                                    <li><strong>Task ID:</strong> ${task.taskId}</li>
+                                    <li><strong>Task Name:</strong> ${task.taskName}</li>
+                                    <li><strong>Project ID:</strong> ${task.projectId}</li>
+                                    <li><strong>Assigned To:</strong> ${task.assignedToUserId}</li>
+                                    <li><strong>Start Date:</strong> ${task.taskStartDate}</li>
+                                    <li><strong>End Date:</strong> ${task.taskEndDate}</li>
+                                    <li><strong>Priority:</strong> ${task.priority}</li>
+                                    <li><strong>Status:</strong> ${task.status}</li>
+                                    <li><strong>Description:</strong> ${task.description}</li>
+                                `;
+                        document.getElementById("taskDetails").innerHTML = taskDetails;
+                        displayMessage("Task found.", false);
+                    }
+                })
+                .catch(error => displayMessage(error.message, true));
+        }
+
+        // Display message in modal
+        function displayMessage(message, isError = false) {
+            const modal = document.getElementById("responseModal");
+            const messageElement = document.getElementById("responseMessage");
+            messageElement.textContent = message;
+            messageElement.className = isError ? "error" : "success";
+            modal.style.display = "block";
+        }
+
+        // Close the modal
+        function closeModal() {
+            document.getElementById("responseModal").style.display = "none";
+        }
+
+        function getFormData() {
+            const taskData = {
+                taskId: document.getElementById("taskId").value,
                 taskName: document.getElementById("taskName").value,
-                description: document.getElementById("description").value,
-                status: document.getElementById("status").value,
-                taskEndDate: document.getElementById("taskEndDate").value,
-                priority: parseInt(document.getElementById("priority").value),
+                projectId: document.getElementById("projectId").value,
                 assignedToUserId: parseInt(document.getElementById("assignedToUserId").value),
-                projectId: parseInt(document.getElementById("projectId").value)
+                taskStartDate: document.getElementById("taskStartDate").value,
+                taskEndDate: document.getElementById("taskEndDate").value,
+                priority: document.getElementById("priority").value,
+                status: document.getElementById("status").value,
+                description: document.getElementById("description").value,
             };
+            return taskData;
         }
     </script>
 </body>

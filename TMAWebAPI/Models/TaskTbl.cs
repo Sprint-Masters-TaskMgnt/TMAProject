@@ -15,7 +15,7 @@ public partial class TaskTbl
 
     public DateTime TaskStartDate { get; set; }
 
-    public DateTime TaskEndDate { get; set; }
+    public DateTime? TaskEndDate { get; set; }
 
     public string Priority { get; set; } = null!;
 

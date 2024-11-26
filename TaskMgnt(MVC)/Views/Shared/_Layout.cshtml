@@ -1,5 +1,4 @@
-﻿﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -38,13 +37,22 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Index", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    <li>@Html.ActionLink("DashBoard", "DashBoard", "User", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    <li>@Html.ActionLink("AdminDashBoard", "DashBoard", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                    @if(User.IsInRole("Admin"))
+                    {
+                        <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li> @Html.ActionLink("Home", "Dashboard", "Admin", new { area = "" }, new { @class = "nav-link" }) </li>
+                    }
+                    else if(User.IsInRole("User"))
+                    {
+                        <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li> @Html.ActionLink("Home", "Dashboard", "User", new { area = "" }, new { @class = "nav-link" }) </li>
+                    }
+
+
 
                 </ul>
                 @Html.Partial("_LoginPartial")
@@ -53,7 +61,7 @@
     </nav>
     <div class="container body-content">
         @RenderBody()
-        @*<hr />*@
+
         <footer>
             <p>&copy; @DateTime.Now.Year - Task Management Application</p>
         </footer>

@@ -142,7 +142,7 @@ namespace TaskMgnt_MVC_.Controllers
             }
         }
 
-        //
+        
         // GET: /Account/Register
         [AllowAnonymous]
         public ActionResult Register()
@@ -150,9 +150,7 @@ namespace TaskMgnt_MVC_.Controllers
             return View();
         }
 
-        //
-        // POST: /Account/Register
-        // POST: /Account/Register
+       
         // POST: /Account/Register
         [HttpPost]
         [AllowAnonymous]
@@ -446,7 +444,7 @@ namespace TaskMgnt_MVC_.Controllers
         public ActionResult LogOff()
         {
             AuthenticationManager.SignOut(DefaultAuthenticationTypes.ApplicationCookie);
-            return RedirectToAction("Index", "Home");
+            return RedirectToAction("Login", "Account");
         }
 
         //

@@ -127,5 +127,11 @@ namespace TMAWebAPI.Controllers
 
             return NoContent();
         }
+
+        [HttpGet("GetEmail/{email}")]
+        public async Task<ActionResult<User>> GetUserByEmail(string email)
+        {
+            return Ok(await _context.Users.FirstAsync(users => users.Email.Equals(email)));
+        }
     }
 }

@@ -43,5 +43,9 @@ namespace TMAWebAPI.Controllers
         {
             return View();
         }
+        public ActionResult UserProductivity()
+        {
+            return View();
+        }
     }
 }

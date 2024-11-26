@@ -99,6 +99,7 @@ namespace TMAWebAPI.Controllers
 
             return File(reportBytes, "text/csv", fileName);
         }
+
         [HttpGet("UserProductivityReport/{userId}")]
         public async Task<IActionResult> DownloadUserProductivityReport(int userId)
         {
@@ -150,7 +151,7 @@ namespace TMAWebAPI.Controllers
             tContent.AppendLine($"Total Tasks: {totalTasks}");
             tContent.AppendLine($"Completed Tasks: {completedTasks}");
             tContent.AppendLine($"In Progress Tasks: {inProgressTasks}");
-            tContent.AppendLine($"In Progress Tasks: {notstarted}");
+            tContent.AppendLine($"Not Started Tasks: {notstarted}");
             tContent.AppendLine($"Productivity Percentage: {productivityPercentage:F2}%");
             tContent.AppendLine();
             tContent.AppendLine("Task Name,Status");
