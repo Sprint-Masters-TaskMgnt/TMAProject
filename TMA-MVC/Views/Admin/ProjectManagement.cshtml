@@ -117,8 +117,7 @@
     </div>
 
     <script>
-    const apiBaseUrl = "https://localhost:7071/api/TaskTbls";
-
+        const apiBaseUrl = "https://localhost:7071/api/TaskTbls";
         function fetchProjectDetails() {
             const projectId = document.getElementById("projectId").value.trim();
 
@@ -127,12 +126,12 @@
                 return;
             }
 
-            const fetchUrl = ${ apiBaseUrl }/getProjectDetails/${ projectId };
+            const fetchUrl = `${apiBaseUrl}/getProjectDetails/${projectId}`;
 
             fetch(fetchUrl)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error(No project found with ID: ${ projectId });
+                        throw new Error(`No project found with ID: ${ projectId }`);
         }
         return response.json();
                     })
@@ -182,12 +181,12 @@
         }
 
         function downloadProjectReport(projectId) {
-            const downloadUrl = ${ apiBaseUrl }/downloadProjectReport/${ projectId };
+            const downloadUrl = `${ apiBaseUrl }/downloadProjectReport/${ projectId }`;
 
             fetch(downloadUrl)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error(Failed to download report: ${ response.statusText });
+                        throw new Error(`Failed to download report: ${ response.statusText }`);
                     }
                     return response.blob();
                 })
@@ -204,7 +203,7 @@
                 })
                 .catch((error) => {
                     console.error("Error:", error.message);
-                    alert(Error: ${ error.message });
+                    alert(`Error: ${ error.message }`);
                 });
         }</script>
 </body>

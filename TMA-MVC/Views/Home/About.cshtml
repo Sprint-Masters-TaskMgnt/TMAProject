@@ -1,20 +1,10 @@
-﻿@*@{
-        ViewBag.Title = "About";
-    }
-    <main aria-labelledby="title">
-        <h2 id="title">@ViewBag.Title.</h2>
-        <h3>@ViewBag.Message</h3>
-
-        <p>Use this area to provide additional information.</p>
-    </main>*@
-
-
-
+﻿
 @{
     ViewBag.Title = "About";
     ViewBag.Message = "Effortless Task Management for Teams and Individuals";
 }
-<main aria-labelledby="title" class="container mt-4">
+
+<main aria-labelledby="title" class="container mt-4" style="background-color: black; color: white;">
     <h2 id="title" class="text-primary">@ViewBag.Title</h2>
     <h3 class="text-secondary">@ViewBag.Message</h3>
 

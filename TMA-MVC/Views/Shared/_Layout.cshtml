@@ -42,11 +42,11 @@
                     <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    <li>@Html.ActionLink("DashBoard", "DashBoard", "User", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("User", "DashBoard", "User", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    <li>@Html.ActionLink("AdminDashBoard", "DashBoard", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
+                    <li>@Html.ActionLink("Admin", "DashBoard", "Admin", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    <li>@Html.ActionLink("Productivity", "Index", "UserProductivity", new { area = "" }, new { @class = "nav-link" })</li>
+                    @*<li>@Html.ActionLink("Productivity", "Index", "UserProductivity", new { area = "" }, new { @class = "nav-link" })</li>*@
                 </ul>
                 @Html.Partial("_LoginPartial")
             </div>
@@ -55,9 +55,9 @@
     <div class="container body-content">
         @RenderBody()
         @*<hr />*@
-        <footer>
-            <p>&copy; @DateTime.Now.Year - Task Management Application</p>
-        </footer>
+        <!--<footer>-->
+            @*<p>&copy; @DateTime.Now.Year - Task Management Application</p>*@
+        <!--</footer>-->
     </div>
 
     @Scripts.Render("~/bundles/jquery")
@@ -65,3 +65,10 @@
     @RenderSection("scripts", required: false)
 </body>
 </html>
+<style>
+    .navbar-brand{
+        color:red;
+        
+
+    }
+</style>
