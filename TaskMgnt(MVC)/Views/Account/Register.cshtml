@@ -120,10 +120,57 @@
                 @Html.PasswordFor(m => m.PasswordHash, new { @class = "form-control", placeholder = "Password" })
             </div>
 
-            <div class="form-group">
+            @*<div class="form-group">
                 @Html.LabelFor(m => m.PhoneNumber, "Phone Number")
                 @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Phone Number" })
+            </div>*@
+            <div class="form-group">
+                @Html.LabelFor(m => m.PhoneNumber, "Phone Number")
+                @Html.TextBoxFor(m => m.PhoneNumber, new
+                {
+                    @class = "form-control",
+                    placeholder = "Phone Number",
+                    type = "tel",
+                    maxlength = "13", // +91 + 10 digits = 13 characters
+                    pattern = @"^(\+91)?[6-9]\d{9}$",
+                    title = "Phone number must be exactly 10 digits or start with +91 followed by 10 digits."
+                })
+                <span class="text-danger" id="phoneError" style="display:none;">Invalid phone number. Enter 10 digits or +91 followed by 10 digits.</span>
             </div>
+
+            <script>
+                document.addEventListener("DOMContentLoaded", function () {
+                    const phoneInput = document.querySelector('[name="PhoneNumber"]');
+                    const errorMessage = document.getElementById("phoneError");
+
+                    // Restrict input to valid patterns
+                    phoneInput.addEventListener("input", function () {
+                        const value = phoneInput.value;
+
+                        // Regex to match valid phone numbers
+                        const regex = /^(\+91)?[6-9]\d{0,9}$/;
+
+                        if (regex.test(value)) {
+                            errorMessage.style.display = "none"; // Hide error message
+                        } else {
+                            errorMessage.style.display = "block"; // Show error message
+                            phoneInput.value = value.slice(0, -1); // Trim the last invalid character
+                        }
+                    });
+
+                    // Prevent form submission if the input is invalid
+                    const form = phoneInput.closest("form");
+                    form.addEventListener("submit", function (e) {
+                        const value = phoneInput.value;
+                        const isValid = /^(\+91)?[6-9]\d{9}$/.test(value); // Match full pattern
+
+                        if (!isValid) {
+                            e.preventDefault(); // Prevent submission
+                            errorMessage.style.display = "block"; // Show error message
+                        }
+                    });
+                });
+            </script>
 
             <div class="btn-container">
                 <input type="submit" value="Register" class="btn btn-outline-dark" />
