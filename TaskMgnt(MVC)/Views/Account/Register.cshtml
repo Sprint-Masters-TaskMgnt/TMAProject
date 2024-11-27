@@ -3,47 +3,134 @@
     ViewBag.Title = "Register";
 }
 
-<main aria-labelledby="title">
-    <h2 id="title">@ViewBag.Title.</h2>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            background-image: url("https://i.pinimg.com/originals/d1/b0/83/d1b083ac9d9344250908137e08d6eb20.jpg");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            font-family: Arial, sans-serif;
+            color: white;
+        }
 
-    @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
-    {
-        @Html.AntiForgeryToken()
-        <h4>Create a new account.</h4>
-        <hr />
-        @Html.ValidationSummary("", new { @class = "text-danger" })
-        <div class="row">
-            @Html.LabelFor(m => m.UserName, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control" })
+        main {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 10px;
+        }
+
+        h2, h4 {
+            text-align: center;
+            color: white;
+        }
+
+        .form-control {
+            background: rgba(255, 255, 255, 0.9);
+            color: black;
+            padding: 10px;
+            font-size: 14px;
+            border-radius: 5px;
+            width: 100%;
+        }
+
+            .form-control:focus {
+                border-color: #007bff;
+                box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+            }
+
+        .btn-outline-dark {
+            color: white;
+            border: 1px solid white;
+            padding: 8px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+            .btn-outline-dark:hover {
+                background-color: white;
+                color: black;
+            }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+            .form-group label {
+                display: block;
+                margin-bottom: 5px;
+                font-weight: bold;
+                color: #ddd;
+            }
+
+            .form-group input {
+                width: 100%;
+                padding: 8px;
+                font-size: 14px;
+                border: 1px solid #ccc;
+                border-radius: 5px;
+            }
+
+                .form-group input:focus {
+                    border-color: #007bff;
+                    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+                }
+
+        .btn-container {
+            text-align: center;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <main aria-labelledby="title">
+        <h2 id="title">@ViewBag.Title</h2>
+
+        @using (Html.BeginForm("Register", "Account", FormMethod.Post, new { role = "form" }))
+        {
+            @Html.AntiForgeryToken()
+            <h4>Create a new account.</h4>
+            <hr />
+            @Html.ValidationSummary("", new { @class = "text-danger" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.UserName, "Username")
+                @Html.TextBoxFor(m => m.UserName, new { @class = "form-control", placeholder = "Username" })
             </div>
-        </div>
-        <div class="row">
-            @Html.LabelFor(m => m.Email, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.Email, new { @class = "form-control" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.Email, "Email")
+                @Html.TextBoxFor(m => m.Email, new { @class = "form-control", placeholder = "Email" })
             </div>
-        </div>
-        <div class="row">
-            @Html.LabelFor(m => m.PasswordHash, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.PasswordFor(m => m.PasswordHash, new { @class = "form-control" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.PasswordHash, "Password")
+                @Html.PasswordFor(m => m.PasswordHash, new { @class = "form-control", placeholder = "Password" })
             </div>
-        </div>
-        <div class="row">
-            @Html.LabelFor(m => m.PhoneNumber, new { @class = "col-md-2 col-form-label" })
-            <div class="col-md-10">
-                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control" })
+
+            <div class="form-group">
+                @Html.LabelFor(m => m.PhoneNumber, "Phone Number")
+                @Html.TextBoxFor(m => m.PhoneNumber, new { @class = "form-control", placeholder = "Phone Number" })
             </div>
-        </div>
-        <div class="row">
-            <div class="offset-md-2 col-md-10">
+
+            <div class="btn-container">
                 <input type="submit" value="Register" class="btn btn-outline-dark" />
             </div>
-        </div>
-    }
-</main>
+        }
+    </main>
 
-@section Scripts {
-    @Scripts.Render("~/bundles/jqueryval")
-}
+    @section Scripts {
+        @Scripts.Render("~/bundles/jqueryval")
+    }
+</body>
+</html>

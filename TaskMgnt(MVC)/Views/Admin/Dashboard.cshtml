@@ -1,5 +1,4 @@
-﻿﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,114 +6,130 @@
     <title>Document</title>
     <style>
         * {
-            margin: 0px;
-            padding: 1px;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
-            margin: 0px;
-            background-image: url("https://tse4.mm.bing.net/th?id=OIP.YiaO0cWNfFV8ox2cSBFUwgHaEo&pid=Api&P=0&h=180");
-            background-repeat: no-repeat;
+            margin: 0;
             height: 100vh;
+            background-image: url("https://www.cumminsandwhite.com/wp-content/uploads/2017/03/Black-Desk-Background.jpg");
+            background-repeat: no-repeat;
             background-size: cover;
             font-family: Arial, sans-serif;
         }
 
         .menu {
             display: grid;
-            grid-template-columns: 200px 200px 200px;
-            justify-content: space-between;
-            padding: 20px 200px 40px 180px;
-            grid-template-areas: inherit;
-            border: none;
-            background: none;
-        }
-
-        .line {
-            margin: 0px 120px;
-            border: 1px solid rgb(206, 206, 206);
+            grid-template-columns: repeat(4, 1fr); /* 3 items per row */
+            gap: 20px;
+            padding: 40px 100px;
         }
 
         .card1 {
             width: 180px;
-            margin: 20px 30px;
+            text-align: center;
+            margin: 0 auto;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
 
         .tumbnail > img {
             height: 140px;
-            width: 200px;
-            border-radius: 20px;
+            width: 100%;
+            border-radius: 15px;
         }
 
-        .card1 > .desc {
-            margin: 0px;
-            line-height: 25px;
+        .desc {
+            margin-top: 10px;
         }
 
-        .desc > h5 {
-            text-align: center;
-            color:black;
-            text-decoration:none;
-            font-weight: bold;
-        }
+            .desc > a {
+                display: inline-block;
+                padding: 10px 20px;
+                background-color: #007bff;
+                color: white;
+                text-decoration: none;
+                border-radius: 5px;
+                font-weight: bold;
+                transition: background-color 0.3s ease;
+            }
+
+                .desc > a:hover {
+                    background-color: #0056b3;
+                }
     </style>
 </head>
 <body>
     <div class="menu">
 
-
         <div class="card1">
             <div class="tumbnail">
-                <img src="https://tse1.mm.bing.net/th?id=OIP.Cfx_VpvxWgWxMe14Npzj-wHaHa&pid=Api&P=0&h=180" alt="">
+                <img src="https://tse4.mm.bing.net/th?id=OIP.GxczUW9ShhTQl5NV5V4OnQHaHQ&pid=Api&P=0&h=180" alt="">
             </div>
             <div class="desc">
-                <h5> @Html.ActionLink("Users", "Users", "Admin", new { area = "" })</h5>
+                <a href="@Url.Action("Users", "Admin", new { id = @ViewBag.Message ?? 0 })">Users</a>
             </div>
         </div>
+
         <div class="card1">
             <div class="tumbnail">
                 <img src="https://tse3.mm.bing.net/th?id=OIP.sqeIc3FfZUzctFt_lNmBCgHaHa&pid=Api&P=0&h=180" alt="">
             </div>
             <div class="desc">
-                <h5> @Html.ActionLink("Projects", "Projects", "Admin", new { area = "" })</h5>
+                <a href="@Url.Action("Projects", "Admin", new { id = @ViewBag.Message ?? 0 })">Projects </a>
             </div>
         </div>
 
         <div class="card1">
             <div class="tumbnail">
-                <img src="https://tse1.mm.bing.net/th?id=OIP.bN_M1t9qoiaZ2BrSt0TGQQHaHa&pid=Api&P=0&h=180" alt="">
+                <img src="https://tse2.mm.bing.net/th?id=OIP.i759UkvEkTw5xOgVzyPh3wHaHa&pid=Api&P=0&h=180" alt="">
             </div>
             <div class="desc">
-                <h5>@Html.ActionLink("Tasks", "Tasks", "Admin", new { area = "" })</h5>
+                <a href="@Url.Action("Tasks", "Admin", new { id = @ViewBag.Message ?? 0 })">Tasks </a>
             </div>
         </div>
+
         <div class="card1">
             <div class="tumbnail">
-                <img src="https://tse1.mm.bing.net/th?id=OIP.U1JE0NoMpiQ9ypnF1fvI-QHaGK&pid=Api&P=0&h=180" alt="">
+                <img src="https://tse2.mm.bing.net/th?id=OIP.UIvXQB7B6tbB-lqEq1q6_AHaGW&pid=Api&P=0&h=180" alt="">
             </div>
             <div class="desc">
-                <h5>@Html.ActionLink("ProjectManagement", "ProjectManagement", "Admin", new { area = "" })</h5>
+                <a href="@Url.Action("ProjectManagement", "Admin", new { id = @ViewBag.Message ?? 0})">Project Details </a>
             </div>
         </div>
+
         <div class="card1">
             <div class="tumbnail">
-                <img src="https://tse3.mm.bing.net/th?id=OIP.O98sSzdaFvIGGIV7_em1gQAAAA&pid=Api&P=0&h=180" alt="">
+                <img src="https://tse3.mm.bing.net/th?id=OIP.CyblGQ5JiMrVter3OFSdzgHaIR&pid=Api&P=0&h=180" alt="">
             </div>
             <div class="desc">
-                <h5>@Html.ActionLink("ProjectReport", "ProjectReport", "Admin", new { area = "" })</h5>
+                <a href="@Url.Action("ProjectReport", "Admin", new { id = @ViewBag.Message ?? 0 })">Project Report</a>
             </div>
         </div>
+
         <div class="card1">
             <div class="tumbnail">
-                <img src="https://tse2.mm.bing.net/th?id=OIP.0rAWKbJR8jxy9mOrd6CO7AAAAA&pid=Api&P=0&h=180" alt="">
+                <img src="https://tse3.mm.bing.net/th?id=OIP.Rkj_bIp75d8cgOsTu_jNLAAAAA&pid=Api&P=0&h=180" alt="">
             </div>
             <div class="desc">
-                <h5>@Html.ActionLink("TaskReport", "TaskReport", "Admin", new { area = "" })</h5>
+                <a href="@Url.Action("TaskReport", "Admin", new { id = @ViewBag.Message ?? 0 })">Task Report</a>
             </div>
         </div>
+
+        <div class="card1">
+            <div class="tumbnail">
+                <img src="https://tse2.mm.bing.net/th?id=OIP.88mYKM7vh9eFwz_loowbEQHaG3&pid=Api&P=0&h=180" alt="">
+            </div>
+            <div class="desc">
+                <a href="@Url.Action("UserProductivity", "Admin", new { id = @ViewBag.Message ?? 0})">UserProductivity</a>
+            </div>
+        </div>
+
 
     </div>
-
-
 </body>
 </html>

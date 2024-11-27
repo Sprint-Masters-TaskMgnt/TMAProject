@@ -1,8 +1,32 @@
-﻿
-@{
-    ViewBag.Title = "Contact";
-    ViewBag.Message = "Your contact page.";
+﻿@{
+    ViewBag.Title = "Hello there!";
+    ViewBag.Message = "Know more about us ";
 }
+
+<style>
+    /* Apply the background image to the body or main container */
+    body {
+        background-image: url('https://i.pinimg.com/736x/c7/9f/0f/c79f0f8b930abef3c5aff910874e8a6b.jpg');
+        background-size: cover; /* Ensures the image covers the entire page */
+        background-position: center; /* Centers the background image */
+        background-attachment: fixed; /* Fixes the image position on scroll */
+        color: white; /* Adjust text color for visibility */
+    }
+
+    * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+    }
+
+    /* Optional: Adjust the content container */
+    main {
+        background-color: rgba(0, 0, 0, 0.5); /* Add a slight transparent background to improve text readability */
+        padding: 20px;
+        border-radius: 8px;
+    }
+</style>
+
 <main aria-labelledby="title" class="container mt-4">
     <h2 id="title" class="text-primary">@ViewBag.Title</h2>
     <h3 class="text-secondary">@ViewBag.Message</h3>
@@ -46,13 +70,3 @@
             </li>
         </ul>
     </section>
-
-    <section class="mt-4">
-        <h4>Visit Us</h4>
-        <p>We'd love to see you! Here's our location:</p>
-        <div>
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3153.0198939196625!2d-122.1419516846831!3d37.44188397982459!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x808fba03b1b1b91f%3A0x4f1f2c529d63f96!2s123%20Productivity%20Ln%2C%20Menlo%20Park%2C%20CA%2094025%2C%20USA!5e0!3m2!1sen!2sin!4v1605201262892!5m2!1sen!2sin"
-                    width="100%" height="300" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
-        </div>
-    </section>
-</main>

@@ -1,9 +1,20 @@
-﻿
-@{
+﻿@{
     ViewBag.Title = "About";
     ViewBag.Message = "Effortless Task Management for Teams and Individuals";
 }
-<main aria-labelledby="title" class="container mt-4">
+<style>
+    * {
+        margin: 0px;
+        padding: 0px;
+        box-sizing: border-box;
+    }
+
+    body {
+        margin: 0px;
+        padding: 0px;
+    }
+</style>
+<main aria-labelledby="title" class="container mt-4" style="background-color: black; color: white;">
     <h2 id="title" class="text-primary">@ViewBag.Title</h2>
     <h3 class="text-secondary">@ViewBag.Message</h3>
 
