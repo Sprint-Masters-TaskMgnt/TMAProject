@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -157,7 +156,6 @@
                     <p><strong>End Date:</strong> ${new Date(project.endDate).toLocaleDateString()}</p>
                 `;
 
-            // Render tasks in a list
             const taskList = `
                     <h3>Tasks</h3>
                     <div class="task-list">
@@ -175,9 +173,7 @@
                 `;
             projectDetailsDiv.insertAdjacentHTML('beforeend', taskList);
 
-            // Show download button
-            const downloadButtonContainer = document.getElementById("downloadButtonContainer");
-            downloadButtonContainer.style.display = "block";
+            document.getElementById("downloadButtonContainer").style.display = "block";
             document.getElementById("downloadReportBtn").onclick = () => downloadProjectReport(project.projectId);
         }
 

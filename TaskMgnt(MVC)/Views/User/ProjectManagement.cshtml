@@ -115,7 +115,8 @@
         <button id="downloadReportBtn">Download Report</button>
     </div>
 
-    <script>const apiBaseUrl = "https://localhost:7071/api/TaskTbls";
+    <script>
+        const apiBaseUrl = "https://localhost:7071/api/TaskTbls";
 
         function fetchProjectDetails() {
             const projectId = document.getElementById("projectId").value.trim();
@@ -125,12 +126,12 @@
                 return;
             }
 
-            const fetchUrl = ${apiBaseUrl}/getProjectDetails/${projectId};
+            const fetchUrl = `${apiBaseUrl}/getProjectDetails/${projectId}`;
 
             fetch(fetchUrl)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error(No project found with ID: ${projectId});
+                        throw new Error(`No project found with ID: ${projectId}`);
                     }
                     return response.json();
                 })
@@ -140,7 +141,7 @@
                 .catch((error) => {
                     console.error("Error:", error.message);
                     document.getElementById("projectDetails").innerHTML = `
-                            <p style="color: red;">Error: ${error.message}</p>`;
+                                <p style="color: red;">Error: ${error.message}</p>`;
                     document.getElementById("downloadButtonContainer").style.display = "none";
                 });
         }
@@ -148,44 +149,41 @@
         function displayProjectDetails(project) {
             const projectDetailsDiv = document.getElementById("projectDetails");
             projectDetailsDiv.innerHTML = `
-                    <h2>Project Details</h2>
-                    <p><strong>Project Name:</strong> ${project.projectName}</p>
-                    <p><strong>Description:</strong> ${project.description}</p>
-                    <p><strong>Start Date:</strong> ${new Date(project.startDate).toLocaleDateString()}</p>
-                    <p><strong>End Date:</strong> ${new Date(project.endDate).toLocaleDateString()}</p>
-                `;
+                        <h2>Project Details</h2>
+                        <p><strong>Project Name:</strong> ${project.projectName}</p>
+                        <p><strong>Description:</strong> ${project.description}</p>
+                        <p><strong>Start Date:</strong> ${new Date(project.startDate).toLocaleDateString()}</p>
+                        <p><strong>End Date:</strong> ${new Date(project.endDate).toLocaleDateString()}</p>
+                    `;
 
-            // Render tasks in a list
             const taskList = `
-                    <h3>Tasks</h3>
-                    <div class="task-list">
-                        ${project.tasks.map(task => `
-                            <div class="task-box">
-                                <strong>Task Name:</strong> ${task.taskName}
-                                <strong>Description:</strong> ${task.description}
-                                <strong>Start Date:</strong> ${new Date(task.taskStartDate).toLocaleDateString()}
-                                <strong>End Date:</strong> ${new Date(task.taskEndDate).toLocaleDateString()}
-                                <strong>Priority:</strong> ${task.priority}
-                                <strong>Status:</strong> ${task.status}
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
+                        <h3>Tasks</h3>
+                        <div class="task-list">
+                            ${project.tasks.map(task => `
+                                <div class="task-box">
+                                    <strong>Task Name:</strong> ${task.taskName}
+                                    <strong>Description:</strong> ${task.description}
+                                    <strong>Start Date:</strong> ${new Date(task.taskStartDate).toLocaleDateString()}
+                                    <strong>End Date:</strong> ${new Date(task.taskEndDate).toLocaleDateString()}
+                                    <strong>Priority:</strong> ${task.priority}
+                                    <strong>Status:</strong> ${task.status}
+                                </div>
+                            `).join('')}
+                        </div>
+                    `;
             projectDetailsDiv.insertAdjacentHTML('beforeend', taskList);
 
-            // Show download button
-            const downloadButtonContainer = document.getElementById("downloadButtonContainer");
-            downloadButtonContainer.style.display = "block";
+            document.getElementById("downloadButtonContainer").style.display = "block";
             document.getElementById("downloadReportBtn").onclick = () => downloadProjectReport(project.projectId);
         }
 
         function downloadProjectReport(projectId) {
-            const downloadUrl = ${apiBaseUrl}/downloadProjectReport/${projectId};
+            const downloadUrl = `${apiBaseUrl}/downloadProjectReport/${projectId}`;
 
             fetch(downloadUrl)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error(Failed to download report: ${response.statusText});
+                        throw new Error(`Failed to download report: ${response.statusText}`);
                     }
                     return response.blob();
                 })
@@ -194,7 +192,7 @@
                     const a = document.createElement("a");
                     a.style.display = "none";
                     a.href = url;
-                    a.download = Project_${projectId}_Report.csv;
+                    a.download = `Project_${projectId}_Report.csv`;
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
@@ -202,8 +200,9 @@
                 })
                 .catch((error) => {
                     console.error("Error:", error.message);
-                    alert(Error: ${error.message});
+                    alert(`Error: ${error.message}`);
                 });
-        }</script>
+        }
+    </script>
 </body>
 </html>

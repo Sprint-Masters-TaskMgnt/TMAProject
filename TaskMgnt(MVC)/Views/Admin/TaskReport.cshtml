@@ -1,5 +1,4 @@
-﻿
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -82,7 +81,7 @@
             border: 1px solid #ddd;
             border-radius: 8px;
             padding: 15px;
-            width: calc(50% - 20px); /* Two columns */
+            width: calc(50% - 20px);
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
         }
 
@@ -115,10 +114,10 @@
     <h1>User Task Report</h1>
 
     <!-- Input to enter User ID -->
-    <form id="userIdForm">
+    <form id="userIdForm" onsubmit="generateReport(event)">
         <label for="userId">User ID:</label>
         <input type="text" id="userId" name="userId" placeholder="Enter User ID" required>
-        <button type="button" onclick="generateReport()">Generate Report</button>
+        <button type="submit">Generate Report</button>
     </form>
 
     <!-- Report Container -->
@@ -145,7 +144,19 @@
         const tasksApiUrl = 'https://localhost:7071/api/UserTaskReport/TaskTbls'; // Replace with your API endpoint
         const userApiUrl = 'https://localhost:7071/api/UserTaskReport/Users'; // Replace with your API endpoint
 
-        function generateReport() {
+        async function fetchData(url) {
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error("Error fetching data");
+                return await response.json();
+            } catch (error) {
+                alert(error.message);
+                return null;
+            }
+        }
+
+        async function generateReport(event) {
+            event.preventDefault();
             const userId = document.getElementById("userId").value.trim();
 
             if (!userId) {
@@ -153,40 +164,28 @@
                 return;
             }
 
-            // Fetch user details
-            fetch(`${userApiUrl}/${userId}`)
-                .then(response => {
-                    if (!response.ok) throw new Error("User not found.");
-                    return response.json();
-                })
-                .then(user => {
-                    // Fetch tasks associated with the user
-                    fetch(`${tasksApiUrl}/${userId}`)
-                        .then(response => {
-                            if (!response.ok) throw new Error("Tasks not found.");
-                            return response.json();
-                        })
-                        .then(tasks => {
-                            displayReport(user, tasks);
-                        })
-                        .catch(error => alert(error.message));
-                })
-                .catch(error => alert(error.message));
+            const user = await fetchData(`${userApiUrl}/${userId}`);
+            if (!user) return;
+
+            const tasks = await fetchData(`${tasksApiUrl}/${userId}`);
+            if (!tasks) return;
+
+            displayReport(user, tasks);
         }
 
         function displayReport(user, tasks) {
             // User Details
             const userDetailsDiv = document.getElementById("userDetails");
             userDetailsDiv.innerHTML = `
-                    <h2>User Details</h2>
-                    <p><strong>User ID:</strong> ${user.userId}</p>
-                    <p><strong>Name:</strong> ${user.userName}</p>
-                    <p><strong>Email:</strong> ${user.email}</p>
-                `;
+                        <h2>User Details</h2>
+                        <p><strong>User ID:</strong> ${user.userId}</p>
+                        <p><strong>Name:</strong> ${user.userName}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                    `;
 
             // Tasks
             const tasksDiv = document.getElementById("tasks");
-            if (tasks.length === 0) {
+            if (!tasks.length) {
                 tasksDiv.innerHTML = "<h2>Tasks</h2><p>No tasks found for this user.</p>";
             } else {
                 tasksDiv.innerHTML = "<h2>Tasks</h2>";
@@ -197,12 +196,12 @@
                     const taskBox = document.createElement("div");
                     taskBox.className = "task-box";
                     taskBox.innerHTML = `
-                            <strong>Task Name:</strong> ${task.taskName}
-                            <strong>Status:</strong> ${task.status}
-                            <strong>Priority:</strong> ${task.priority}
-                            <strong>Start Date:</strong> ${new Date(task.startDate).toLocaleDateString()}
-                            <strong>End Date:</strong> ${new Date(task.endDate).toLocaleDateString()}
-                        `;
+                                <strong>Task Name:</strong> ${task.taskName}
+                                <strong>Status:</strong> ${task.status}
+                                <strong>Priority:</strong> ${task.priority}
+                                <strong>Start Date:</strong> ${new Date(task.startDate).toLocaleDateString()}
+                                <strong>End Date:</strong> ${new Date(task.endDate).toLocaleDateString()}
+                            `;
                     tasksGrid.appendChild(taskBox);
                 });
 
@@ -215,23 +214,22 @@
             document.getElementById("downloadReportBtn").onclick = () => downloadReport(user.userId);
         }
 
-        function downloadReport(userId) {
+        async function downloadReport(userId) {
             const downloadUrl = `${tasksApiUrl}/${userId}/downloadReport`;
 
-            fetch(downloadUrl)
-                .then(response => {
-                    if (!response.ok) throw new Error("Failed to download report.");
-                    return response.blob();
-                })
-                .then(blob => {
-                    const url = window.URL.createObjectURL(blob);
-                    const a = document.createElement("a");
-                    a.href = url;
-                    a.download = `User_${userId}_Task_Report.csv`;
-                    a.click();
-                    window.URL.revokeObjectURL(url);
-                })
-                .catch(error => alert("Error downloading report: " + error.message));
+            try {
+                const response = await fetch(downloadUrl);
+                if (!response.ok) throw new Error("Failed to download report.");
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `User_${userId}_Task_Report.csv`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                alert("Error downloading report: " + error.message);
+            }
         }
     </script>
 </body>
