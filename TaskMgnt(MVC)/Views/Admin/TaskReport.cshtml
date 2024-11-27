@@ -1,4 +1,4 @@
-﻿UserTask Report.............
+﻿
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -141,7 +141,8 @@
         <button id="downloadReportBtn">Download Report</button>
     </div>
 
-    <script>const tasksApiUrl = 'https://localhost:7071/api/UserTaskReport/TaskTbls'; // Replace with your API endpoint
+    <script>
+        const tasksApiUrl = 'https://localhost:7071/api/UserTaskReport/TaskTbls'; // Replace with your API endpoint
         const userApiUrl = 'https://localhost:7071/api/UserTaskReport/Users'; // Replace with your API endpoint
 
         function generateReport() {
@@ -153,14 +154,14 @@
             }
 
             // Fetch user details
-            fetch(${userApiUrl}/${userId})
+            fetch(`${userApiUrl}/${userId}`)
                 .then(response => {
                     if (!response.ok) throw new Error("User not found.");
                     return response.json();
                 })
                 .then(user => {
                     // Fetch tasks associated with the user
-                    fetch(${tasksApiUrl}/${userId})
+                    fetch(`${tasksApiUrl}/${userId}`)
                         .then(response => {
                             if (!response.ok) throw new Error("Tasks not found.");
                             return response.json();
@@ -215,7 +216,7 @@
         }
 
         function downloadReport(userId) {
-            const downloadUrl = ${tasksApiUrl}/${userId}/downloadReport;
+            const downloadUrl = `${tasksApiUrl}/${userId}/downloadReport`;
 
             fetch(downloadUrl)
                 .then(response => {
@@ -226,11 +227,12 @@
                     const url = window.URL.createObjectURL(blob);
                     const a = document.createElement("a");
                     a.href = url;
-                    a.download = User_${userId}_Task_Report.csv;
+                    a.download = `User_${userId}_Task_Report.csv`;
                     a.click();
                     window.URL.revokeObjectURL(url);
                 })
                 .catch(error => alert("Error downloading report: " + error.message));
-        }</script>
+        }
+    </script>
 </body>
 </html>

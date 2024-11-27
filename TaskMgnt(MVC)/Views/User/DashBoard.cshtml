@@ -70,7 +70,7 @@
                 <img src="https://tse2.mm.bing.net/th?id=OIP.qTBtuORrAyDN6y4qvugP3gHaHa&pid=Api&P=0&h=180" alt="Update Profile">
             </div>
             <div class="desc">
-                <a href="Url.Action("UpdateProfile", "User", new { id = ViewBag.Message ?? 0 })">UpdateProfile</a>
+                <a href="@Url.Action("UpdateProfile", "User", new { id = ViewBag.Message ?? 0 })">UpdateProfile</a>
             </div>
         </div>
         <div class="card1">
@@ -78,7 +78,7 @@
                 <img src="https://tse3.mm.bing.net/th?id=OIP.sqeIc3FfZUzctFt_lNmBCgHaHa&pid=Api&P=0&h=180" alt="Assign Task">
             </div>
             <div class="desc">
-                <a href="/User/AssignTask">Assign Task</a>
+               
                 <a href="@Url.Action("AssignTask", "User", new { id = @ViewBag.Message ?? 0 })">AssignTask </a>
             </div>
         </div>
@@ -87,7 +87,7 @@
                 <img src="https://tse4.mm.bing.net/th?id=OIP.XeR2q48BoynO5rv18umgjQHaHa&pid=Api&P=0&h=180" alt="Update Task">
             </div>
             <div class="desc">
-                <a href="/User/UpdateTask">Update Task</a>
+               
                 <a href="@Url.Action("UpdateTask", "User", new { id = @ViewBag.Message ?? 0})">UpdateTask</a>
             </div>
         </div>
@@ -96,7 +96,7 @@
                 <img src="https://tse2.mm.bing.net/th?id=OIP.UIvXQB7B6tbB-lqEq1q6_AHaGW&pid=Api&P=0&h=180" alt="Project Details">
             </div>
             <div class="desc">
-                <a href="/User/ProjectManagement">Project Details</a>
+               
                 <a href="@Url.Action("ProjectManagement", "User", new { id = @ViewBag.Message ?? 0 })">Project Details</a>
             </div>
         </div>
@@ -105,7 +105,6 @@
                 <img src="https://tse3.mm.bing.net/th?id=OIP.Rkj_bIp75d8cgOsTu_jNLAAAAA&pid=Api&P=0&h=180" alt="Task Report">
             </div>
             <div class="desc">
-                <a href="/User/TaskReport" , new{id=@ViewBag.Message ?? 0}>Task Report</a>
                 <a href="@Url.Action("TaskReport", "User", new { id = @ViewBag.Message ?? 0 })">TaskReport</a>
             </div>
         </div>

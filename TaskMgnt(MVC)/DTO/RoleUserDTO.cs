@@ -9,6 +9,7 @@ namespace TaskMgnt_MVC_.DTO
 {
     public class RoleUserDTO
     {
+        [Required]
         public int Id { get; set; }
         public string Email { get; set; }
 

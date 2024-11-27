@@ -97,6 +97,11 @@ namespace TaskMgnt_MVC_.Controllers
             ViewBag.Message = id;
             return View(id);
         }
+        public ActionResult UpdateUserRole(int id)
+        {
+            ViewBag.Message = id;
+            return View(id);
+        }
 
 
     }

@@ -1,4 +1,5 @@
-﻿<!DOCTYPE html>
+﻿
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -115,7 +116,8 @@
         <button id="downloadReportBtn">Download Report</button>
     </div>
 
-    <script>const apiBaseUrl = "https://localhost:7071/api/TaskTbls";
+    <script>
+        const apiBaseUrl = "https://localhost:7071/api/TaskTbls";
 
         function fetchProjectDetails() {
             const projectId = document.getElementById("projectId").value.trim();
@@ -125,12 +127,12 @@
                 return;
             }
 
-            const fetchUrl = ${apiBaseUrl}/getProjectDetails/${projectId};
+            const fetchUrl = `${apiBaseUrl}/getProjectDetails/${projectId}`;
 
             fetch(fetchUrl)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error(No project found with ID: ${projectId});
+                        throw new Error(`No project found with ID: ${projectId}`);
                     }
                     return response.json();
                 })
@@ -180,12 +182,12 @@
         }
 
         function downloadProjectReport(projectId) {
-            const downloadUrl = ${apiBaseUrl}/downloadProjectReport/${projectId};
+            const downloadUrl = `${apiBaseUrl}/downloadProjectReport/${projectId}`;
 
             fetch(downloadUrl)
                 .then((response) => {
                     if (!response.ok) {
-                        throw new Error(Failed to download report: ${response.statusText});
+                        throw new Error(`Failed to download report: ${response.statusText}`);
                     }
                     return response.blob();
                 })
@@ -194,7 +196,7 @@
                     const a = document.createElement("a");
                     a.style.display = "none";
                     a.href = url;
-                    a.download = Project_${projectId}_Report.csv;
+                    a.download = `Project_${projectId}_Report.csv`;
                     document.body.appendChild(a);
                     a.click();
                     window.URL.revokeObjectURL(url);
@@ -202,8 +204,9 @@
                 })
                 .catch((error) => {
                     console.error("Error:", error.message);
-                    alert(Error: ${error.message});
+                    alert(`Error: ${error.message}`);
                 });
-        }</script>
+        }
+    </script>
 </body>
 </html>

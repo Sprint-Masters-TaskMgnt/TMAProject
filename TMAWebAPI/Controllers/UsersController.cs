@@ -133,5 +133,48 @@ namespace TMAWebAPI.Controllers
         {
             return Ok(await _context.Users.FirstAsync(users => users.Email.Equals(email)));
         }
+
+        /// <summary>
+        /// Allows updating a user's role by their UserId.
+        /// </summary>
+        /// <param name="userId">The ID of the user to update.</param>
+        /// <param name="updateRoleRequest">The request body containing the new RoleId.</param>
+        /// <returns>
+        /// A 200 OK response if the update is successful,
+        /// a 400 Bad Request response if the input is invalid,
+        /// or a 404 Not Found response if the user does not exist.
+        /// </returns>
+        [HttpPut("updateUserRole/{userId}")]
+        public async Task<IActionResult> UpdateUserRole(int userId, [FromBody] UpdateUserRoleDTO updateRoleRequest)
+        {
+            // Validate the input
+            if (updateRoleRequest == null || updateRoleRequest.RoleId <= 0)
+            {
+                return BadRequest(new { Message = "Invalid RoleId." });
+            }
+
+            // Step 1: Retrieve the user by userId
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null)
+            {
+                return NotFound(new { Message = $"User with ID {userId} not found." });
+            }
+
+            // Step 2: Check if the RoleId is valid (exists in the Roles table)
+            var roleExists = await _context.Roles.AnyAsync(r => r.RoleId == updateRoleRequest.RoleId);
+            if (!roleExists)
+            {
+                return BadRequest(new { Message = "Invalid RoleId provided." });
+            }
+
+            // Step 3: Update the user's RoleId
+            user.RoleId = updateRoleRequest.RoleId;
+
+            // Step 4: Save changes to the database
+            _context.Users.Update(user);
+            await _context.SaveChangesAsync();
+
+            return Ok(new { Message = "User role updated successfully." });
+        }
     }
 }

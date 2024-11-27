@@ -6,9 +6,12 @@ using System.Web.Mvc;
 using Microsoft.AspNet.Identity;
 using Microsoft.AspNet.Identity.Owin;
 using Microsoft.Owin.Security;
+using TaskMgnt_MVC_.Controllers;
+using TaskMgnt_MVC_.Models;
+using TaskMgnt_MVC_;
 using TaskMgnt_MVC_.Models;
 
-namespace TaskMgnt_MVC_.Controllers
+namespace TMA_MVC_.Controllers
 {
     [Authorize]
     public class ManageController : Controller
@@ -32,9 +35,9 @@ namespace TaskMgnt_MVC_.Controllers
             {
                 return _signInManager ?? HttpContext.GetOwinContext().Get<ApplicationSignInManager>();
             }
-            private set 
-            { 
-                _signInManager = value; 
+            private set
+            {
+                _signInManager = value;
             }
         }
 
@@ -333,7 +336,7 @@ namespace TaskMgnt_MVC_.Controllers
             base.Dispose(disposing);
         }
 
-#region Helpers
+        #region Helpers
         // Used for XSRF protection when adding external logins
         private const string XsrfKey = "XsrfId";
 
@@ -384,6 +387,6 @@ namespace TaskMgnt_MVC_.Controllers
             Error
         }
 
-#endregion
+        #endregion
     }
 }
