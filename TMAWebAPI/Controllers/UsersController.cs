@@ -13,10 +13,14 @@ namespace TMAWebAPI.Controllers
     public class UsersController : ControllerBase
     {
         private readonly TMADbContext _context;
+        private readonly ILogger<UsersController> _logger;
 
-        public UsersController(TMADbContext context)
+
+        public UsersController(TMADbContext context, ILogger<UsersController> logger)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         // GET: api/User
@@ -47,7 +51,7 @@ namespace TMAWebAPI.Controllers
             {
                 return NotFound(new { Message = $"User with ID {id} not found." });
             }
-
+            _logger.LogInformation("Received a Users Get request");
             return Ok(new
             {
                 user.Id,
@@ -56,6 +60,7 @@ namespace TMAWebAPI.Controllers
                 user.UserName,
                 user.RoleId
             });
+
         }
 
         // POST: api/User
@@ -81,6 +86,7 @@ namespace TMAWebAPI.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation("Received a Create User request");
             return CreatedAtAction(nameof(GetUser), new { id = user.Id }, user);
         }
 
@@ -109,6 +115,7 @@ namespace TMAWebAPI.Controllers
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
 
+            _logger.LogInformation("Received a Update User request");
             return NoContent();
         }
 
@@ -131,6 +138,7 @@ namespace TMAWebAPI.Controllers
         [HttpGet("GetEmail/{email}")]
         public async Task<ActionResult<User>> GetUserByEmail(string email)
         {
+            _logger.LogInformation("Received a Delete User request");
             return Ok(await _context.Users.FirstAsync(users => users.Email.Equals(email)));
         }
 
@@ -173,6 +181,8 @@ namespace TMAWebAPI.Controllers
             // Step 4: Save changes to the database
             _context.Users.Update(user);
             await _context.SaveChangesAsync();
+
+            _logger.LogInformation("Received a UpdateUserRole request");
 
             return Ok(new { Message = "User role updated successfully." });
         }

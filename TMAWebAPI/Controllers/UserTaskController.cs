@@ -12,10 +12,14 @@ namespace TMAWebAPI.Controllers
     {
 
         private readonly TMADbContext _context;
+        private readonly ILogger<UserTaskReportController> _logger;
 
-        public UserTaskReportController(TMADbContext context)
+
+        public UserTaskReportController(TMADbContext context, ILogger<UserTaskReportController> logger)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         // Endpoint to fetch user details by user ID
@@ -36,7 +40,7 @@ namespace TMAWebAPI.Controllers
             {
                 return NotFound(new { Message = $"User with ID {userId} not found." });
             }
-
+            _logger.LogInformation("Received a GetUserDetails request");
             return Ok(user);
         }
 
@@ -58,6 +62,8 @@ namespace TMAWebAPI.Controllers
             {
                 return NotFound(new { Message = "No tasks found for this user." });
             }
+
+            _logger.LogInformation("Received a GetUserTasks request");
 
             return Ok(tasks);
         }
@@ -97,6 +103,7 @@ namespace TMAWebAPI.Controllers
             var reportBytes = Encoding.UTF8.GetBytes(csvContent.ToString());
             var fileName = $"User_{userId}_Task_Report.csv";
 
+            _logger.LogInformation("Received a DownloadUser request");
             return File(reportBytes, "text/csv", fileName);
         }
 
@@ -165,6 +172,7 @@ namespace TMAWebAPI.Controllers
             var tBytes = Encoding.UTF8.GetBytes(tContent.ToString());
             var fileName = $"User_{userId}_Productivity_Report.txt";
 
+            _logger.LogInformation("Received a DownLoadUserReport request");
             return File(tBytes, "text/txt", fileName);
         }
     }

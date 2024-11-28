@@ -14,11 +14,14 @@ namespace TMAWebAPI.Controllers
     {
         private readonly TMADbContext _context;
         private readonly IEmailService _emailService;
+        private readonly ILogger<TaskTblsController> _logger;
 
-        public TaskTblsController(TMADbContext context, IEmailService emailService)
+        public TaskTblsController(TMADbContext context, IEmailService emailService, ILogger<TaskTblsController> logger)
         {
             _context = context;
             _emailService = emailService;
+            _logger = logger;
+
         }
 
         // GET: api/TaskTbls
@@ -38,7 +41,8 @@ namespace TMAWebAPI.Controllers
             {
                 return NotFound();
             }
-
+            
+            _logger.LogInformation("Received a Tasks Get request");
             return taskTbl;
         }
 
@@ -81,7 +85,7 @@ namespace TMAWebAPI.Controllers
                     throw;
                 }
             }
-
+            _logger.LogInformation("Received a Tasks put request");
             return NoContent();
         }
 
@@ -124,7 +128,7 @@ namespace TMAWebAPI.Controllers
                     throw;  // Re-throw if it's a different exception
                 }
             }
-
+            _logger.LogInformation("Received a Tasks post request");
             // Return the newly created TaskTbl, with a 201 status code and the created resource's URL
             return CreatedAtAction("GetTaskTbl", new { id = taskTbl.TaskId }, taskTbl);
         }
@@ -203,6 +207,7 @@ namespace TMAWebAPI.Controllers
 
             await _emailService.SendEmailAsync(adminEmail, adminSubject, adminBody);
 
+            _logger.LogInformation("Received a Tasks Update request");
             return NoContent();
         }
 
@@ -310,7 +315,7 @@ namespace TMAWebAPI.Controllers
             {
                 return NotFound(new { Message = $"User with ID {userId} not found." });
             }
-
+            _logger.LogInformation("Received a GetUserDetails by UserId request");
             return Ok(user);
         }
 
@@ -332,7 +337,7 @@ namespace TMAWebAPI.Controllers
             {
                 return NotFound(new { Message = $"No tasks found for user ID: {userId}" });
             }
-
+            _logger.LogInformation("Received a GetUserTask by a user ID request");
             return Ok(tasks);
         }
 

@@ -11,10 +11,14 @@ namespace TMAWebAPI.Controllers
     public class ReportController : ControllerBase
     {
         private readonly TMADbContext _context;
+        private readonly ILogger<ReportController> _logger;
 
-        public ReportController(TMADbContext context)
+
+        public ReportController(TMADbContext context, ILogger<ReportController> logger)
         {
             _context = context;
+            _logger = logger;
+
         }
 
         // Generate detailed report for a specific project with all tasks
@@ -49,6 +53,7 @@ namespace TMAWebAPI.Controllers
 
                 if (projectDetails == null)
                 {
+                   
                     return NotFound("Project not found.");
                 }
 
@@ -68,7 +73,7 @@ namespace TMAWebAPI.Controllers
                 {
                     reportContent.AppendLine($"{task.TaskName},{task.Description},{task.TaskStartDate:yyyy-MM-dd},{task.TaskEndDate:yyyy-MM-dd},{task.Priority},{task.Status}");
                 }
-
+                _logger.LogInformation("Received a Report");
                 return Content(reportContent.ToString(), "text/plain");
             }
             catch (Exception ex)
@@ -127,7 +132,7 @@ namespace TMAWebAPI.Controllers
                     {
                         reportContent.AppendLine($"{task.TaskName},{task.Description},{task.TaskStartDate:yyyy-MM-dd},{task.TaskEndDate:yyyy-MM-dd},{task.Priority},{task.Status}");
                     }
-
+                    _logger.LogInformation("Received a Report");
                     reportContent.AppendLine(); // Separate projects
                 }
 
