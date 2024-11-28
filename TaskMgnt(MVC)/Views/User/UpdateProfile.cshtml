@@ -8,7 +8,7 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            background-image: url('https://www.kindpng.com/picc/m/115-1155127_white-pages-download-hd-png-download.png');
+            background-image: url('https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTkLsgPeEjp5X1W4Wol91bxlC1okWj6M2tgyXQIiy9GnwowFnm8fIwYAFn40IXDAbW2mkc&usqp=CAU%27');
             background-size: cover;
             background-repeat: no-repeat;
         }
@@ -36,6 +36,7 @@
                 margin-bottom: 5px;
                 font-weight: bold;
                 font-size: large;
+                color:white;
             }
 
             form input, form button {
@@ -87,16 +88,18 @@
             margin-left: 400px;
             margin-top: 45px;
         }
+        #xyz{
+            color:white;
+        }
     </style>
 </head>
 <body>
-    <h1>Update Profile</h1>
+    <h1 id="xyz">Update Profile</h1>
     <form id="updateProfileForm">
 
-        <img src="https://cdni.iconscout.com/illustration/premium/thumb/update-your-profile-1946860-1648379.png" style="width: 650px; height: 500px;">
 
         <label for="id">User ID:</label>
-        <input type="number" id="id" placeholder="Enter User ID" required onblur="fetchUserData()" />
+        <input type="number" id="id" placeholder="Enter User ID" value= @ViewBag.Message readonly onblur="fetchUserData()" />
 
         <label for="userName">Username:</label>
         <input type="text" id="userName" placeholder="Enter Username" required />
@@ -107,9 +110,11 @@
         <label for="email">Email:</label>
         <input type="email" id="email" placeholder="Enter Email" required />
 
+        @*<label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" placeholder="Enter Phone Number" required />*@
         <label for="phoneNumber">Phone Number:</label>
-        <input type="text" id="phoneNumber" placeholder="Enter Phone Number" required />
-
+        <input type="number" id="phoneNumber" placeholder="Enter Phone Number" maxlength="10" required />
+        <div id="phoneValidationMessage" style="color: red; font-size: 20px; margin-top: 3px;"></div>
         <!-- Hidden Role ID Field -->
         <input type="hidden" id="roleId" value="2" />
 
@@ -135,7 +140,23 @@
             popup.style.display = "block";
             overlay.style.display = "block";
         }
+        const phoneNumberInput = document.getElementById('phoneNumber');
+        const validationMessage = document.getElementById('phoneValidationMessage');
 
+        // Restrict non-digit characters and enforce max length
+        phoneNumberInput.addEventListener('input', () => {
+            phoneNumberInput.value = phoneNumberInput.value.replace(/\D/g, '');
+            validationMessage.textContent = ''; // Clear message while typing
+        });
+
+        // Validate the number on blur
+        phoneNumberInput.addEventListener('blur', () => {
+            if (phoneNumberInput.value.length !== 10) {
+                validationMessage.textContent = "Please enter a valid 10-digit mobile number.";
+            } else {
+                validationMessage.textContent = ''; // Clear the message if valid
+            }
+        });
         // Close the popup
         function closePopup() {
             document.getElementById("popup").style.display = "none";

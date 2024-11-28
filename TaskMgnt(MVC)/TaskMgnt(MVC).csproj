@@ -258,7 +258,7 @@
     <Content Include="Views\Manage\VerifyPhoneNumber.cshtml" />
     <Content Include="Views\Shared\Lockout.cshtml" />
     <Content Include="Views\Shared\_LoginPartial.cshtml" />
-    <Content Include="Views\Admin\Dashboard.cshtml" />
+    <Content Include="Views\Admin\AdminDashboard.cshtml" />
     <Content Include="Views\Admin\ProjectManagement.cshtml" />
     <Content Include="Views\Admin\ProjectReport.cshtml" />
     <Content Include="Views\Admin\Projects.cshtml" />
@@ -266,7 +266,7 @@
     <Content Include="Views\Admin\Tasks.cshtml" />
     <Content Include="Views\Admin\Users.cshtml" />
     <Content Include="Views\User\AssignTask.cshtml" />
-    <Content Include="Views\User\DashBoard.cshtml" />
+    <Content Include="Views\User\UserDashboard.cshtml" />
     <Content Include="Views\User\ProjectManagement.cshtml" />
     <Content Include="Views\User\TaskReport.cshtml" />
     <Content Include="Views\User\TaskTbl.cshtml" />

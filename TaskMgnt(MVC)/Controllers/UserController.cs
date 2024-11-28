@@ -63,15 +63,15 @@ namespace TaskMgnt_MVC_.Controllers
 {
     public class UserController : Controller
     {
-        public ActionResult DashBoard(int? id)
+        public ActionResult UserDashboard(int? id)
         {
             ViewBag.Message = id;
+            ViewBag.Role = "User";
             return View(id);
         }
 
         public ActionResult TaskTbl()
         {
-
             return View();
         }
 

@@ -24,7 +24,7 @@ builder.Services.AddDbContext<TMADbContext>(options =>
 //Configure Serilog
 Log.Logger = new LoggerConfiguration()
     .WriteTo.Console()
-    .WriteTo.File("logs/log.txt", rollingInterval: RollingInterval.Day)
+    .WriteTo.File("wwwroot/log.txt", rollingInterval: RollingInterval.Day)
     .CreateLogger();
 
 Log.Information("Started");
@@ -56,5 +56,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.UseStaticFiles();
 
 app.Run();

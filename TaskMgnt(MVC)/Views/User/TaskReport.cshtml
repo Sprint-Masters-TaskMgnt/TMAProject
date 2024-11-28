@@ -3,18 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Task Report</title>
+    <title >User Task Report</title>
     <style>
         body {
             font-family: Arial, sans-serif;
+           
             background-color: #f4f4f9;
+            background-repeat:no-repeat;
             margin: 0;
             padding: 20px;
         }
 
         h1 {
             text-align: center;
-            color: navy;
+            color: black;
         }
 
         form {
@@ -31,6 +33,7 @@
                 padding: 8px;
                 font-size: 1rem;
                 width: 250px;
+                color:white;
             }
 
             form button {
@@ -199,8 +202,8 @@
                                     <strong>Task Name:</strong> ${task.taskName}
                                     <strong>Status:</strong> ${task.status}
                                     <strong>Priority:</strong> ${task.priority}
-                                    <strong>Start Date:</strong> ${new Date(task.startDate).toLocaleDateString()}
-                                    <strong>End Date:</strong> ${new Date(task.endDate).toLocaleDateString()}
+                                    <strong>Start Date:</strong> ${new Date(task.taskStartDate).toLocaleDateString()}
+                                    <strong>End Date:</strong> ${new Date(task.taskEndDate).toLocaleDateString()}
                                 `;
                     tasksGrid.appendChild(taskBox);
                 });

@@ -315,7 +315,7 @@ namespace TMAWebAPI.Controllers
             {
                 return NotFound(new { Message = $"User with ID {userId} not found." });
             }
-            _logger.LogInformation("Received a GetUserDetails by UserId request");
+            _logger.LogInformation("Received a  request");
             return Ok(user);
         }
 
@@ -329,7 +329,10 @@ namespace TMAWebAPI.Controllers
                 {
                     t.TaskId,
                     t.TaskName,
-                    t.Status
+                    t.Status,
+                    t.TaskEndDate,
+                    t.TaskStartDate,
+                    t.Priority
                 })
                 .ToListAsync();
 

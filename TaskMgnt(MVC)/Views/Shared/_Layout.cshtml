@@ -44,13 +44,13 @@
                     <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
 
-                    @if (User.IsInRole("Admin"))
+                    @if (ViewBag.Role == "Admin")
                     {
-                        <li> @Html.ActionLink("Dashboard", "Dashboard", "Admin", new { id = @ViewBag.Message ?? 0 }, new { @class = "nav-link" }) </li>
+                        <li> @Html.ActionLink("AdminDashboard", "AdminDashboard", "Admin", new { id = @ViewBag.Message ?? 0 }, new { @class = "nav-link" }) </li>
                     }
-                    else if (User.IsInRole("User"))
+                    else if (ViewBag.Role == "User")
                     {
-                        <li> @Html.ActionLink("Dashboard", "Dashboard", "User", new { id = @ViewBag.Message ?? 0 }, new { @class = "nav-link" }) </li>
+                        <li> @Html.ActionLink("UserDashboard" , "UserDashboard", "User", new { id = @ViewBag.Message ?? 0 }, new { @class = "nav-link" }) </li>
                     }
 
                 </ul>

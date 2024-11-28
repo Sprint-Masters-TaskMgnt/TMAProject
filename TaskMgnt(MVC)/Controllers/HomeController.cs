@@ -47,7 +47,7 @@ namespace TaskMgnt_MVC_.Controllers
                 ViewBag.Role = "Admin";
 
                 // Logic for admin users
-                return RedirectToAction("Dashboard", "Admin", new { id = userResponse.Id });
+                return RedirectToAction("AdminDashboard", "Admin", new { id = userResponse.Id });
             }
             else
             {
@@ -55,8 +55,9 @@ namespace TaskMgnt_MVC_.Controllers
                 ViewBag.Role = "User";
 
                 //var json = new { UserId=userResponse.UserId };
-                return RedirectToAction("Dashboard", "User", new { id = userResponse.Id });
+               return RedirectToAction("UserDashboard", "User", new { id = userResponse.Id });
             }
+        
         }
 
         public ActionResult Home()

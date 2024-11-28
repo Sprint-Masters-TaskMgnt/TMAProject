@@ -198,9 +198,9 @@
                     taskBox.innerHTML = `
                                 <strong>Task Name:</strong> ${task.taskName}
                                 <strong>Status:</strong> ${task.status}
-                                <strong>Priority:</strong> ${task.priority}
-                                <strong>Start Date:</strong> ${new Date(task.startDate).toLocaleDateString()}
-                                <strong>End Date:</strong> ${new Date(task.endDate).toLocaleDateString()}
+                               <strong>Start Date:</strong> ${new Date(task.taskStartDate).toLocaleDateString()}
+                               <strong>End Date:</strong> ${new Date(task.taskEndDate).toLocaleDateString()}
+                               <strong>Priority:</strong> ${task.priority}
                             `;
                     tasksGrid.appendChild(taskBox);
                 });

@@ -54,7 +54,11 @@ namespace TMAWebAPI.Controllers
                 {
                     TaskId = t.TaskId,
                     TaskName = t.TaskName,
-                    Status = t.Status
+                    Status = t.Status,
+                    TaskEndDate =(DateTime)t.TaskEndDate,
+                    TaskStartDate = (DateTime)t.TaskStartDate,
+                    Priority = t.Priority
+
                 })
                 .ToListAsync();
 
@@ -82,7 +86,8 @@ namespace TMAWebAPI.Controllers
                     t.TaskName,
                     t.Status,
                     t.TaskStartDate,
-                    t.TaskEndDate
+                    t.TaskEndDate,
+                    t.Priority
                 })
                 .ToListAsync();
 

@@ -14,6 +14,6 @@ namespace TMAWebAPI.DTO
         //    throw new NotImplementedException();
         //}
         public string Priority { get; set; }
-        public DateTime? TaskEndDate { get; set; }
+        public DateTime TaskEndDate { get; set; }
     }
 }

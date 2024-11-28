@@ -55,9 +55,10 @@ namespace TaskMgnt_MVC_.Controllers
     public class AdminController : Controller
     {
         // GET: Admin
-        public ActionResult Dashboard(int? id)
+        public ActionResult AdminDashboard(int? id)
         {
             ViewBag.Message = id;
+            ViewBag.Role = "Admin";
             return View(id);
         }
         public ActionResult Users(int id)
