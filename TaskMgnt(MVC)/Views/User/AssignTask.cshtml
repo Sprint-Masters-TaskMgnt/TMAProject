@@ -85,11 +85,11 @@
         <br />
         <br />
 
-        <h4>Or</h4>
+        @*<h4>Or</h4>*@
         <br />
 
-        <label for="Email">Email:</label>
-        <input type="text" id="Email" name="Email" required placeholder="Enter Email">
+        <label for="Email" hidden>Email:</label>
+        <input type="text" id="Email" name="Email" required placeholder="Enter Email" hidden>
         <br /><br />
         <button type="button" onclick="validateUserAndRedirect()">Validate User</button>
 
@@ -100,7 +100,7 @@
 
     @*<div id="usersList"></div>*@
 
-    <script>
+<script>
         const apiUrl = 'https://localhost:7071/api/Users';  // User API endpoint for validation
         const taskPageUrl = '@Url.Action("TaskTbl", "User")';  // Replace with the URL of your task assignment page
 
@@ -111,6 +111,8 @@
 
             if (!userId && !email) {
                 return displayMessage("Please enter User ID or Email to validate", true);
+            } else if (userId ==@ViewBag.Message) {
+                return displayMessage("You Can't Add Task for You", true);
             }
 
             // Step 1: Check if User ID is provided
@@ -164,6 +166,6 @@
             responseLabel.textContent = message;
         }
 
-    </script>
+</script>
 </body>
 </html>

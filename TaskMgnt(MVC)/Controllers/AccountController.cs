@@ -167,7 +167,7 @@ namespace TaskMgnt_MVC_.Controllers
                 var result = await UserManager.CreateAsync(user, model.PasswordHash);
                 if (result.Succeeded)
                 {
-                    await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
+                    //await SignInManager.SignInAsync(user, isPersistent: false, rememberBrowser: false);
 
                     // Log the registration success
                     TempData["Message"] = "Registration successful.";

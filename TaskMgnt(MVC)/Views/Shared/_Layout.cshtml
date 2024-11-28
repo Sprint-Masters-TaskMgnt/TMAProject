@@ -26,7 +26,7 @@
         }
 
         .navbar-brand {
-            color: red;
+            color: white;
         }
     </style>
 </head>
@@ -40,9 +40,7 @@
             </button>
             <div class="collapse navbar-collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    <li>@Html.ActionLink("Home", "Home", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
-                    <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+
 
                     @if (ViewBag.Role == "Admin")
                     {
@@ -50,7 +48,13 @@
                     }
                     else if (ViewBag.Role == "User")
                     {
-                        <li> @Html.ActionLink("UserDashboard" , "UserDashboard", "User", new { id = @ViewBag.Message ?? 0 }, new { @class = "nav-link" }) </li>
+                        <li> @Html.ActionLink("UserDashboard", "UserDashboard", "User", new { id = @ViewBag.Message ?? 0 }, new { @class = "nav-link" }) </li>
+                    }
+                    else
+                    {
+                        <li>@Html.ActionLink("Home", "Home", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("About", "About", "Home", new { area = "" }, new { @class = "nav-link" })</li>
+                        <li>@Html.ActionLink("Contact", "Contact", "Home", new { area = "" }, new { @class = "nav-link" })</li>
                     }
 
                 </ul>

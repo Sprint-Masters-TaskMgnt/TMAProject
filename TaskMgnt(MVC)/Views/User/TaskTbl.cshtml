@@ -160,11 +160,11 @@
             </div>
             <div class="form-group">
                 <label for="taskStartDate">Task Start Date:</label>
-                <input type="date" id="taskStartDate" required>
+                <input type="datetime-local" id="taskStartDate" required>
             </div>
             <div class="form-group">
                 <label for="taskEndDate">Task End Date:</label>
-                <input type="date" id="taskEndDate" required>
+                <input type="datetime-local" id="taskEndDate" required>
             </div>
             <div class="form-group">
                 <label for="priority">Priority:</label>
@@ -333,6 +333,23 @@
             };
             return taskData;
         }
+        // Function to format date as yyyy-mm-ddThh:mm
+        function getCurrentDateTime() {
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0'); // Add leading zero
+            const day = String(now.getDate()).padStart(2, '0'); // Add leading zero
+            const hours = String(now.getHours()).padStart(2, '0'); // Add leading zero
+            const minutes = String(now.getMinutes()).padStart(2, '0'); // Add leading zero
+
+            // Use backticks to correctly format the template literal
+            return `${year}-${month}-${day}T${hours}:${minutes}`;
+        }
+
+        // Set the min attribute to the current date and time
+        document.getElementById('taskStartDate').min = getCurrentDateTime();
+        document.getElementById('taskEndDate').min = getCurrentDateTime();
+
     </script>
 </body>
 </html>
