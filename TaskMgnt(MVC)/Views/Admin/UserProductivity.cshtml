@@ -209,7 +209,7 @@
                     // Create a link element and trigger the download
                     const link = document.createElement("a");
                     link.href = window.URL.createObjectURL(blob);
-                    link.download = `User_${userId}_Productivity_Report.txt`;
+                    link.download = `User_${userId}_Productivity_Report.csv`;
                     link.click();
                 })
                 .catch(error => {
